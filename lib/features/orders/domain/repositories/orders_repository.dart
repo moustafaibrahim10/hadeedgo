@@ -9,7 +9,7 @@ abstract class OrdersRepository {
     DateTime? preferredDeliveryDate,
   });
   Future<OrdersPage> getOrders({String filter = 'All', int page = 1, int pageSize = 20});
-  Future<Order> getActiveOrder();
+  Future<ActiveOrder> getActiveOrder();
   Future<Order> getOrder(String id);
   Future<OrderTracking> getTracking(String id);
 }

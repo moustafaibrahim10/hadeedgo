@@ -8,6 +8,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../cart/presentation/cubits/cart_cubit.dart';
 import '../../domain/entities/catalog_entities.dart';
 import '../cubits/catalog_cubits.dart';
+import '../widgets/product_card.dart';
 
 class CategoriesScreen extends StatelessWidget {
   const CategoriesScreen({super.key});
@@ -171,23 +172,9 @@ class ProductsScreen extends StatelessWidget {
     title: AppLocalizations.of(context).catalogProducts,
     cubit: context.read<ProductsCubit>(),
     state: context.watch<ProductsCubit>().state,
-    itemBuilder: (product) => ListTile(
-      leading: _CatalogImage(
-        imageUrl: product.imageUrl,
-        icon: Icons.inventory_2_outlined,
-      ),
-      title: Text(product.displayTitle(_english(context))),
-      subtitle: Text(
-        [
-          if (product.specsSummary?.isNotEmpty == true) product.specsSummary!,
-          product.supplier.displayName(_english(context)),
-        ].join(' - '),
-      ),
-      trailing: _PriceLabel(
-        price: product.pricePerTon,
-        currency: product.currency,
-        unit: product.unit,
-      ),
+    itemBuilder: (product) => ProductCard(
+      product: product,
+      isEnglish: _english(context),
       onTap: () => context.push('/products/${product.id}'),
     ),
     onRetry: () => context.read<ProductsCubit>().load(
@@ -1145,52 +1132,6 @@ class _ProductActionBar extends StatelessWidget {
   String _formatMoney(num value, String? currency) =>
       '${value.toStringAsFixed(value % 1 == 0 ? 0 : 2)} ${currency ?? ''}'
           .trim();
-}
-
-class _PriceLabel extends StatelessWidget {
-  final num? price;
-  final String? currency;
-  final String? unit;
-
-  const _PriceLabel({this.price, this.currency, this.unit});
-
-  @override
-  Widget build(BuildContext context) {
-    final value = [
-      ...?price?.toString().isNotEmpty == true ? [price.toString()] : null,
-      ...?currency?.isNotEmpty == true ? [currency] : null,
-    ].join(' ');
-    if (value.isEmpty) return const SizedBox.shrink();
-    return Text('$value${unit == null ? '' : ' / $unit'}');
-  }
-}
-
-class _CatalogImage extends StatelessWidget {
-  final String? imageUrl;
-  final IconData icon;
-
-  const _CatalogImage({required this.imageUrl, required this.icon});
-
-  @override
-  Widget build(BuildContext context) => ClipRRect(
-    borderRadius: BorderRadius.circular(8),
-    child: imageUrl?.isNotEmpty == true
-        ? Image.network(
-            imageUrl!,
-            width: 52,
-            height: 52,
-            fit: BoxFit.cover,
-            errorBuilder: (_, _, _) => _placeholder(),
-          )
-        : _placeholder(),
-  );
-
-  Widget _placeholder() => Container(
-    width: 52,
-    height: 52,
-    color: AppColors.surfaceContainerLow,
-    child: Icon(icon, color: AppColors.primary),
-  );
 }
 
 class _SupplierLogo extends StatelessWidget {

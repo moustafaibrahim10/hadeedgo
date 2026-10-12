@@ -15,7 +15,7 @@ class OrderDetailsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(title: Text(trackingOnly ? 'تتبع الطلب' : 'تفاصيل الطلب', style: const TextStyle(fontFamily: 'Tajawal', fontWeight: FontWeight.bold)), leading: IconButton(onPressed: () => context.pop(), icon: const Icon(Icons.arrow_back_ios_new_rounded))),
+      appBar: AppBar(title: Text(trackingOnly ? 'تتبع الطلب' : 'تفاصيل الطلب', style: const TextStyle(fontFamily: 'Tajawal', fontWeight: FontWeight.bold)), leading: IconButton(onPressed: () => _goBack(context), icon: const Icon(Icons.arrow_back_ios_new_rounded))),
       body: BlocBuilder<OrderDetailsCubit, OrderDetailsState>(
         builder: (context, state) {
           if (state.status == OrdersStatus.loading || state.status == OrdersStatus.initial) return const Center(child: CircularProgressIndicator());
@@ -37,6 +37,19 @@ class OrderDetailsScreen extends StatelessWidget {
         },
       ),
     );
+  }
+
+  /// Back button handler. When this screen was reached via [GoRouter.go]
+  /// (e.g. right after checkout, which replaces the stack) there is no page to
+  /// pop, so we fall back to the Orders tab inside the bottom-nav shell.
+  /// When it was pushed on top of another page (e.g. from the orders list),
+  /// a normal pop returns to that page.
+  void _goBack(BuildContext context) {
+    if (context.canPop()) {
+      context.pop();
+    } else {
+      context.go('/orders');
+    }
   }
 }
 

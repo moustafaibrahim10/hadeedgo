@@ -149,15 +149,76 @@ class AuthRepositoryImpl implements AuthRepository {
     } on FailureException {
       rethrow;
     } on DioException catch (error) {
-      if (error.type == DioExceptionType.connectionError ||
-          error.type == DioExceptionType.connectionTimeout ||
-          error.type == DioExceptionType.receiveTimeout) {
-        throw const FailureException(NetworkFailure());
-      }
-      throw FailureException(
-        ServerFailure(error.response?.statusMessage ?? 'حدث خطأ في الخادم'),
-      );
+      throw FailureException(_mapDioError(error));
     }
+  }
+
+  /// Maps a [DioException] to a domain [Failure].
+  ///
+  /// HTTP error responses (e.g. 400 Bad Request on register) usually carry a
+  /// JSON body describing *why* the request was rejected. The previous code
+  /// surfaced only the generic HTTP reason phrase ("Bad Request"), hiding the
+  /// real validation messages. Here we parse the body and expose field-level
+  /// errors when present.
+  Failure _mapDioError(DioException error) {
+    if (error.type == DioExceptionType.connectionError ||
+        error.type == DioExceptionType.connectionTimeout ||
+        error.type == DioExceptionType.receiveTimeout ||
+        error.type == DioExceptionType.sendTimeout) {
+      return const NetworkFailure();
+    }
+
+    final body = error.response?.data;
+    if (body is Map<String, dynamic>) {
+      final fieldErrors = _fieldErrorsFrom(body);
+      if (fieldErrors.isNotEmpty) {
+        return FieldValidationFailure(fieldErrors: fieldErrors);
+      }
+      final message = body['message']?.toString() ?? body['title']?.toString();
+      if (message != null && message.isNotEmpty) {
+        return ServerFailure(message);
+      }
+    }
+
+    return ServerFailure(
+      error.response?.statusMessage ?? error.message ?? 'حدث خطأ في الخادم',
+    );
+  }
+
+  /// Extracts field-level validation errors from an error body.
+  ///
+  /// Supports both the app's own contract
+  /// `errors: [{ field, code, message }]` and ASP.NET Core's
+  /// `ValidationProblemDetails` shape `errors: { Field: ["message"] }`.
+  Map<String, String> _fieldErrorsFrom(Map<String, dynamic> body) {
+    final result = <String, String>{};
+    final rawErrors = body['errors'];
+
+    if (rawErrors is List) {
+      for (final entry in rawErrors) {
+        if (entry is Map<String, dynamic>) {
+          final field = entry['field']?.toString() ?? '';
+          final message = entry['message']?.toString() ?? '';
+          if (field.isNotEmpty && message.isNotEmpty) {
+            result[field] = message;
+          }
+        }
+      }
+    } else if (rawErrors is Map) {
+      rawErrors.forEach((key, value) {
+        final field = key.toString();
+        final messages = value is List ? value : const [];
+        final joined = messages
+            .map((v) => v?.toString() ?? '')
+            .where((v) => v.isNotEmpty)
+            .join(', ');
+        if (field.isNotEmpty && joined.isNotEmpty) {
+          result[field] = joined;
+        }
+      });
+    }
+
+    return result;
   }
 
   Map<String, dynamic> _data(Map<String, dynamic> response) {

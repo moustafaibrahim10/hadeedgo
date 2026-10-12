@@ -12,7 +12,6 @@ import '../cubit/home_state.dart';
 import '../widgets/category_grid.dart';
 import '../widgets/featured_product_card.dart';
 import '../widgets/home_app_bar.dart';
-import '../widgets/home_bottom_navigation.dart';
 import '../widgets/market_news_section.dart';
 import '../widgets/partner_mills_list.dart';
 import '../../../cart/presentation/cubits/cart_cubit.dart';
@@ -61,19 +60,6 @@ class HomeScreen extends StatelessWidget {
               child: const HomeAppBar(),
             ),
             body: _buildBody(context, state),
-            bottomNavigationBar: HomeBottomNavigation(
-              cartItemCount: context
-                  .watch<CartSummaryCubit>()
-                  .state
-                  .summary
-                  .itemCount,
-              onItemSelected: (index) {
-                if (index == 1) context.go('/search');
-                if (index == 2) context.go('/orders');
-                if (index == 3) context.go('/cart');
-                if (index == 4) context.go('/profile');
-              },
-            ),
           ),
         );
         },

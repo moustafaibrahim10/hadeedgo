@@ -32,6 +32,7 @@ class Supplier {
   final String? name;
   final String? nameAr;
   final String? logoUrl;
+  final num? rating;
   final bool isVerified;
 
   const Supplier({
@@ -39,6 +40,7 @@ class Supplier {
     this.name,
     this.nameAr,
     this.logoUrl,
+    this.rating,
     this.isVerified = false,
   });
 
@@ -46,7 +48,8 @@ class Supplier {
     id: json['id']?.toString() ?? '',
     name: json['name']?.toString(),
     nameAr: json['nameAr']?.toString(),
-    logoUrl: json['logoUrl']?.toString(),
+    logoUrl: (json['logoUrl'] ?? json['logo'])?.toString(),
+    rating: json['rating'] is num ? json['rating'] as num : null,
     isVerified: json['isVerified'] == true,
   );
 

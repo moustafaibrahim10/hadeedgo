@@ -13,6 +13,12 @@ class GetOrders {
   Future<OrdersPage> call({String filter = 'All', int page = 1, int pageSize = 20}) => repository.getOrders(filter: filter, page: page, pageSize: pageSize);
 }
 
+class GetActiveOrder {
+  final OrdersRepository repository;
+  const GetActiveOrder(this.repository);
+  Future<ActiveOrder> call() => repository.getActiveOrder();
+}
+
 class GetOrder {
   final OrdersRepository repository;
   const GetOrder(this.repository);

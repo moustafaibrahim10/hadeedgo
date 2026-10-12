@@ -56,11 +56,23 @@ class CreateOrderCubit extends Cubit<CreateOrderState> {
   final CreateOrder _createOrder;
   CreateOrderCubit(this._createOrder) : super(const CreateOrderState());
 
-  Future<void> create({String deliveryMethod = 'Delivery'}) async {
+  Future<void> create({
+    String deliveryMethod = 'Delivery',
+    String? deliveryAddressDetails,
+    String? deliveryAddressLabel,
+    String? pickupSupplierId,
+    DateTime? preferredDeliveryDate,
+  }) async {
     if (state.isSubmitting) return;
     emit(const CreateOrderState(isSubmitting: true));
     try {
-      final order = await _createOrder(deliveryMethod: deliveryMethod);
+      final order = await _createOrder(
+        deliveryMethod: deliveryMethod,
+        deliveryAddressDetails: deliveryAddressDetails,
+        deliveryAddressLabel: deliveryAddressLabel,
+        pickupSupplierId: pickupSupplierId,
+        preferredDeliveryDate: preferredDeliveryDate,
+      );
       emit(CreateOrderState(order: order));
     } catch (error) {
       emit(CreateOrderState(errorMessage: _message(error)));
@@ -69,3 +81,56 @@ class CreateOrderCubit extends Cubit<CreateOrderState> {
 }
 
 String _message(Object error) => error is FailureException ? error.failure.message : error is Failure ? error.message : 'تعذر تحميل الطلب';
+
+// ─── Active Order (Dynamic Island / Banner) ──────────────────────────────────
+
+enum ActiveOrderStatus { initial, loading, active, idle, failure }
+
+class ActiveOrderState {
+  final ActiveOrderStatus status;
+  final ActiveOrder? order;
+  final String? errorMessage;
+
+  const ActiveOrderState({
+    this.status = ActiveOrderStatus.initial,
+    this.order,
+    this.errorMessage,
+  });
+
+  ActiveOrderState copyWith({
+    ActiveOrderStatus? status,
+    ActiveOrder? order,
+    bool clearOrder = false,
+    String? errorMessage,
+  }) => ActiveOrderState(
+    status: status ?? this.status,
+    order: clearOrder ? null : order ?? this.order,
+    errorMessage: errorMessage,
+  );
+}
+
+class ActiveOrderCubit extends Cubit<ActiveOrderState> {
+  final GetActiveOrder _getActiveOrder;
+
+  ActiveOrderCubit(this._getActiveOrder) : super(const ActiveOrderState());
+
+  Future<void> load() async {
+    emit(state.copyWith(status: ActiveOrderStatus.loading, errorMessage: null));
+    try {
+      final order = await _getActiveOrder();
+      if (order.isActive) {
+        emit(state.copyWith(status: ActiveOrderStatus.active, order: order));
+      } else {
+        emit(state.copyWith(status: ActiveOrderStatus.idle, clearOrder: true));
+      }
+    } catch (error) {
+      // On 404 (no active order) treat as idle, not failure.
+      final msg = _message(error);
+      if (error is FailureException && error.failure is ServerFailure) {
+        emit(state.copyWith(status: ActiveOrderStatus.idle, clearOrder: true));
+      } else {
+        emit(state.copyWith(status: ActiveOrderStatus.failure, errorMessage: msg));
+      }
+    }
+  }
+}

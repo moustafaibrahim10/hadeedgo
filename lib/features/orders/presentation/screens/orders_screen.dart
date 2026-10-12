@@ -6,7 +6,6 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/localization/app_localizations.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../home/presentation/widgets/home_app_bar.dart';
-import '../../../home/presentation/widgets/home_bottom_navigation.dart';
 import '../cubits/orders_cubit.dart';
 import '../widgets/order_card.dart';
 
@@ -32,7 +31,6 @@ class OrdersScreen extends StatelessWidget {
             ]));
           },
         ),
-        bottomNavigationBar: HomeBottomNavigation(activeIndex: 2, onItemSelected: (index) { if (index == 0) context.go('/home'); if (index == 1) context.go('/search'); if (index == 3) context.go('/cart'); }),
       ),
     );
   }

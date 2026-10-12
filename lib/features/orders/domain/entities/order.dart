@@ -226,6 +226,42 @@ class OrderTracking {
   );
 }
 
+/// Lightweight active-order summary returned by GET /api/v1/orders/active.
+/// Used for the Dynamic Island / active-shipment banner.
+class ActiveOrder {
+  final String orderId;
+  final String? orderNumber;
+  final String status;
+  final int? etaMinutes;
+  final String? message;
+
+  const ActiveOrder({
+    required this.orderId,
+    this.orderNumber,
+    this.status = 'Unknown',
+    this.etaMinutes,
+    this.message,
+  });
+
+  factory ActiveOrder.fromJson(Map<String, dynamic> json) => ActiveOrder(
+    orderId: _string(json['orderId'] ?? json['id']),
+    orderNumber: json['orderNumber']?.toString(),
+    status: _string(json['status']),
+    etaMinutes: _int(json['etaMinutes']),
+    message: json['message']?.toString(),
+  );
+
+  bool get isActive {
+    final s = status.toLowerCase();
+    return s == 'pending' ||
+        s == 'processing' ||
+        s == 'preparing' ||
+        s == 'shipped' ||
+        s == 'indelivery' ||
+        s == 'outfordelivery';
+  }
+}
+
 List<T> _list<T>(Object? value, T Function(Map<String, dynamic>) mapper) =>
     value is List ? value.whereType<Map<String, dynamic>>().map(mapper).toList() : const [];
 String _string(Object? value) => value?.toString() ?? '';

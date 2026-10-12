@@ -54,6 +54,8 @@ class AppLocalizations {
   String get passwordHint => '••••••••';
   String get forgotPassword => _text('نسيت كلمة المرور؟', 'Forgot password?');
   String get login => _text('دخول', 'Login');
+  String get loginSuccess =>
+      _text('تم تسجيل الدخول بنجاح', 'Logged in successfully');
   String get noAccount => _text('ليس لديك حساب؟ ', 'Don\'t have an account? ');
   String get createAccount => _text('إنشاء حساب جديد', 'Create a new account');
   String get requiredPhone =>
@@ -233,6 +235,7 @@ class AppLocalizations {
     'Mild steel for industrial applications',
   );
   String get pricePerTon => _text('السعر للطن', 'Price per ton');
+  String get viewDetails => _text('التفاصيل', 'View details');
   String get egp => _text('جنيه', 'EGP');
   String get addProductToCart =>
       _text('إضافة المنتج للسلة', 'Add product to cart');

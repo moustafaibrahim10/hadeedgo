@@ -1,15 +1,14 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../core/localization/app_localizations.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../domain/entities/search_product.dart';
-import '../widgets/factory_header_card.dart';
-import '../widgets/product_filter_chips.dart';
-import '../widgets/search_product_card.dart';
+import '../cubits/search_cubit.dart';
+import '../widgets/explore_view.dart';
+import '../widgets/search_results_view.dart';
 import '../widgets/search_top_bar.dart';
-import '../../../home/presentation/widgets/home_bottom_navigation.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -19,36 +18,88 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
-  int _selectedFilter = 0;
+  late final TextEditingController _searchController;
+  late final FocusNode _searchFocusNode;
+  late final ScrollController _scrollController;
+  Timer? _debounce;
+
+  @override
+  void initState() {
+    super.initState();
+    _searchController = TextEditingController();
+    _searchFocusNode = FocusNode();
+    _scrollController = ScrollController()..addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    _searchController.dispose();
+    _searchFocusNode.dispose();
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (!_scrollController.hasClients) return;
+    final maxScroll = _scrollController.position.maxScrollExtent;
+    final currentScroll = _scrollController.position.pixels;
+    if (currentScroll >= maxScroll - 200.h) {
+      context.read<SearchCubit>().loadMore();
+    }
+  }
+
+  void _onQueryChanged(String query) {
+    _debounce?.cancel();
+    if (query.trim().isEmpty) {
+      context.read<SearchCubit>().clear();
+      return;
+    }
+    _debounce = Timer(const Duration(milliseconds: 400), () {
+      if (!mounted) return;
+      _triggerSearch(query.trim());
+    });
+  }
+
+  void _triggerSearch(String query, {String? categoryId}) {
+    _debounce?.cancel();
+    if (query.trim().isEmpty) return;
+    _searchController.text = query;
+    _searchController.selection = TextSelection.fromPosition(
+      TextPosition(offset: query.length),
+    );
+    _searchFocusNode.unfocus();
+    context.read<SearchCubit>().search(
+          q: query.trim(),
+          categoryId: categoryId,
+        );
+  }
+
+  void _clearSearch() {
+    _debounce?.cancel();
+    _searchController.clear();
+    context.read<SearchCubit>().clear();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-    final products = [
-      SearchProduct(
-        name: l10n.rebar12,
-        description: l10n.rebarDescription,
-        price: l10n.rebar12Price,
-        type: SearchProductType.rebar,
-        accent: true,
-      ),
-      SearchProduct(
-        name: l10n.rebar16,
-        description: l10n.rebarDescription,
-        price: l10n.rebar16Price,
-        type: SearchProductType.rebar,
-      ),
-      SearchProduct(
-        name: l10n.coil8,
-        description: l10n.coilDescription,
-        price: l10n.coil8Price,
-        type: SearchProductType.coil,
-      ),
-    ];
+    final searchState = context.watch<SearchCubit>().state;
+    final exploreState = context.watch<ExploreCubit>().state;
+    final recentState = context.watch<RecentSearchesCubit>().state;
+
+    // Merge recent searches from RecentSearchesCubit into ExploreData if available
+    final mergedExploreData = exploreState.data.copyWith(
+      recentSearches: recentState.items.isNotEmpty
+          ? recentState.items
+          : exploreState.data.recentSearches,
+    );
+
+    final isSearching = _searchController.text.trim().isNotEmpty ||
+        searchState.status != SearchStatus.initial;
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
-        statusBarColor: AppColors.surface,
+        statusBarColor: Colors.white,
         statusBarIconBrightness: Brightness.dark,
         statusBarBrightness: Brightness.light,
         systemNavigationBarColor: AppColors.background,
@@ -58,48 +109,64 @@ class _SearchScreenState extends State<SearchScreen> {
         backgroundColor: AppColors.background,
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(
-            54.h + MediaQuery.paddingOf(context).top,
+            64.h + MediaQuery.paddingOf(context).top,
           ),
           child: SearchTopBar(
-            onBack: () => context.go('/home'),
-            onSearch: () {},
+            controller: _searchController,
+            focusNode: _searchFocusNode,
+            onBack: () {
+              if (isSearching) {
+                _clearSearch();
+              } else {
+                context.go('/home');
+              }
+            },
+            onChanged: _onQueryChanged,
+            onSubmitted: (query) => _triggerSearch(query),
+            onClear: _clearSearch,
           ),
         ),
         body: SafeArea(
-          child: ListView(
-            padding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 110.h),
-            children: [
-              const FactoryHeaderCard(),
-              SizedBox(height: 20.h),
-              ProductFilterChips(
-                selectedIndex: _selectedFilter,
-                onSelected: (index) => setState(() => _selectedFilter = index),
-              ),
-              SizedBox(height: 20.h),
-              ...products.map(
-                (product) => Padding(
-                  padding: EdgeInsets.only(bottom: 16.h),
-                  child: SearchProductCard(
-                    product: product,
-                    onAdd: () {},
-                    onTap: () => context.push('/products'),
-                  ),
+          child: isSearching
+              ? SearchResultsView(
+                  state: searchState,
+                  scrollController: _scrollController,
+                  filterCategories: exploreState.data.categories,
+                  onSelectCategoryFilter: (categoryId) {
+                    context.read<SearchCubit>().search(
+                          q: _searchController.text.trim(),
+                          categoryId: categoryId,
+                        );
+                  },
+                  onSelectProduct: (product) => context.push('/products/${product.id}'),
+                  onRetry: () => _triggerSearch(_searchController.text),
+                  onClear: _clearSearch,
+                )
+              : ExploreView(
+                  data: mergedExploreData,
+                  isLoading: exploreState.status == ExploreStatus.loading,
+                  errorMessage: exploreState.errorMessage,
+                  onRefresh: () async {
+                    await Future.wait([
+                      context.read<ExploreCubit>().load(),
+                      context.read<RecentSearchesCubit>().load(),
+                    ]);
+                  },
+                  onSelectQuery: (query) => _triggerSearch(query),
+                  onSelectCategory: (cat) {
+                    context.push('/products?categoryId=${cat.id}');
+                  },
+                  onSelectSupplier: (supplier) {
+                    context.push('/suppliers/${supplier.id}');
+                  },
+                  onClearRecent: () {
+                    context.read<RecentSearchesCubit>().clearAll();
+                  },
+                  onViewAllCategories: () => context.push('/categories'),
+                  onViewAllSuppliers: () => context.push('/suppliers'),
                 ),
-              ),
-            ],
-          ),
-        ),
-        bottomNavigationBar: HomeBottomNavigation(
-          activeIndex: 1,
-          onItemSelected: _onNavigationSelected,
         ),
       ),
     );
-  }
-
-  void _onNavigationSelected(int index) {
-    if (index == 0) context.go('/home');
-    if (index == 2) context.go('/orders');
-    if (index == 3) context.go('/cart');
   }
 }

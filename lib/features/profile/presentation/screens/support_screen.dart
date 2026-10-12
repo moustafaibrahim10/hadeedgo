@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../cubits/account_cubits.dart';
 
 class SupportScreen extends StatefulWidget {
   const SupportScreen({super.key});
@@ -13,18 +16,45 @@ class _SupportScreenState extends State<SupportScreen> {
   final Map<int, bool> _expandedState = {0: true, 1: false, 2: false};
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<SupportCubit>().load();
+    });
+  }
+
+  Future<void> _launch(String uriString) async {
+    final uri = Uri.parse(uriString);
+    try {
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+      }
+    } catch (_) {}
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final state = context.watch<SupportCubit>().state;
+    final info = state.info;
+
+    final phone = info.phone?.isNotEmpty == true ? info.phone! : '19824';
+    final whatsApp = info.whatsApp?.isNotEmpty == true ? info.whatsApp! : '+201001234567';
+    final email = info.email?.isNotEmpty == true ? info.email! : 'support@hadeedgo.com';
+    final hours = info.workingHours?.isNotEmpty == true
+        ? info.workingHours!
+        : 'السبت - الخميس: 9:00 ص - 6:00 م';
+
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        backgroundColor: AppColors.surface.withValues(alpha: 0.7),
+        backgroundColor: AppColors.surface.withValues(alpha: 0.8),
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
         title: const Text(
           'الدعم الفني',
           style: TextStyle(
-            fontSize: 24,
+            fontSize: 22,
             fontWeight: FontWeight.bold,
             color: AppColors.primary,
             fontFamily: 'Tajawal',
@@ -37,15 +67,6 @@ class _SupportScreenState extends State<SupportScreen> {
           ),
           onPressed: () => context.pop(),
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(
-              Icons.notifications_outlined,
-              color: AppColors.secondary,
-            ),
-            onPressed: () {},
-          ),
-        ],
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(0.5),
           child: Container(
@@ -54,199 +75,163 @@ class _SupportScreenState extends State<SupportScreen> {
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
-        child: Column(
-          children: [
-            // Hero Section
-            Center(
-              child: Column(
-                children: [
-                  Container(
-                    width: 192,
-                    height: 192,
-                    decoration: BoxDecoration(
-                      color: AppColors.surfaceContainerLow,
-                      shape: BoxShape.circle,
-                      border: Border.all(color: Colors.white, width: 2),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.05),
-                          blurRadius: 10,
-                        ),
-                      ],
+      body: RefreshIndicator(
+        onRefresh: () => context.read<SupportCubit>().load(),
+        color: AppColors.primaryContainer,
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+          child: Column(
+            children: [
+              // Working hours & message banner
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: AppColors.primaryContainer.withValues(alpha: 0.08),
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(
+                    color: AppColors.primaryContainer.withValues(alpha: 0.2),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(
+                      Icons.schedule_rounded,
+                      color: AppColors.primaryContainer,
+                      size: 24,
                     ),
-                    child: ClipOval(
-                      child: Image.asset(
-                        'assets/photos/png/onboarding3.png', // Temporary placeholder
-                        fit: BoxFit.cover,
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'مواعيد العمل الرسمية',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'Tajawal',
+                              color: AppColors.onSurface,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            hours,
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: AppColors.secondary,
+                              fontFamily: 'Tajawal',
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 16),
-                  const Text(
-                    'كيف يمكننا مساعدتك؟',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.onSurface,
-                      fontFamily: 'Tajawal',
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  const Text(
-                    'فريق الدعم الفني في HadeedGo متواجد على مدار الساعة لحل أي مشكلة تواجهك في منصتنا.',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 15,
-                      color: AppColors.secondary,
-                      fontFamily: 'Tajawal',
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(height: 32),
+              const SizedBox(height: 24),
 
-            // Support Channels
-            ElevatedButton(
-              onPressed: () {},
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primaryContainer,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.all(24),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                elevation: 0,
+              // Contact Channels
+              _buildChannelCard(
+                icon: Icons.phone_in_talk_rounded,
+                iconColor: Colors.blue[700]!,
+                title: 'الاتصال الهاتفي المباشر',
+                subtitle: phone,
+                actionLabel: 'اتصال الآن',
+                onTap: () => _launch('tel:$phone'),
               ),
-              child: Row(
-                children: [
-                  Container(
-                    width: 48,
-                    height: 48,
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.2),
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(Icons.chat, color: Colors.white),
-                  ),
-                  const SizedBox(width: 16),
-                  const Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'المحادثة الفورية',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w600,
-                            fontFamily: 'Tajawal',
-                          ),
-                        ),
-                        SizedBox(height: 4),
-                        Text(
-                          'تحدث مع أحد ممثلينا الآن (أسرع استجابة)',
-                          style: TextStyle(fontSize: 15, fontFamily: 'Tajawal'),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const Icon(
-                    Icons.arrow_forward_ios,
-                    size: 16,
-                  ), // RTL back equivalent
-                ],
+              const SizedBox(height: 12),
+              _buildChannelCard(
+                icon: Icons.chat_bubble_outline_rounded,
+                iconColor: Colors.green[700]!,
+                title: 'محادثة عبر واتساب',
+                subtitle: whatsApp,
+                actionLabel: 'بدء المحادثة',
+                onTap: () => _launch('https://wa.me/${whatsApp.replaceAll('+', '')}'),
               ),
-            ),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                Expanded(
-                  child: _buildContactCard(
-                    icon: Icons.call,
-                    title: 'اتصل بنا',
-                    subtitle: '920000000',
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: _buildContactCard(
-                    icon: Icons.mail_outline,
-                    title: 'البريد الإلكتروني',
-                    subtitle: 'support@hadeedgo.com',
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 32),
+              const SizedBox(height: 12),
+              _buildChannelCard(
+                icon: Icons.alternate_email_rounded,
+                iconColor: Colors.deepOrange[700]!,
+                title: 'البريد الإلكتروني',
+                subtitle: email,
+                actionLabel: 'إرسال بريد',
+                onTap: () => _launch('mailto:$email'),
+              ),
+              const SizedBox(height: 32),
 
-            // FAQ Section
-            const Align(
-              alignment: Alignment.centerRight,
-              child: Text(
-                'الأسئلة الشائعة',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.onSurface,
-                  fontFamily: 'Tajawal',
+              // FAQ Section
+              const Align(
+                alignment: Alignment.centerRight,
+                child: Text(
+                  'الأسئلة الشائعة',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'Tajawal',
+                    color: AppColors.onSurface,
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: 16),
-            _buildFAQItem(
-              index: 0,
-              title: 'تتبع الطلب',
-              content:
-                  'يمكنك تتبع طلبك من خلال الذهاب إلى قسم "الطلبات" في شريط التنقل السفلي، ثم اختيار الطلب الذي تود تتبعه لمعرفة حالته وموقعه الحالي على الخريطة.',
-            ),
-            const SizedBox(height: 12),
-            _buildFAQItem(
-              index: 1,
-              title: 'مشاكل الدفع',
-              content:
-                  'إذا واجهت أي مشكلة أثناء الدفع، يرجى التأكد من صلاحية البطاقة الائتمانية أو رصيد الحساب. في حال استمرار المشكلة، يرجى التواصل مع فريق الدعم عبر المحادثة الفورية.',
-            ),
-            const SizedBox(height: 12),
-            _buildFAQItem(
-              index: 2,
-              title: 'تغير الأسعار',
-              content:
-                  'أسعار الحديد والصلب تتحدث بشكل يومي بناءً على السوق العالمي والمحلي. السعر النهائي للطلب هو السعر المعروض لحظة تأكيد الشراء.',
-            ),
-          ],
+              const SizedBox(height: 12),
+              _buildFaqItem(
+                0,
+                'كيف يمكنني تتبع طلبي؟',
+                'يمكنك تتبع طلبك بالانتقال إلى صفحة "طلباتي" ثم اختيار الطلب النشط والضغط على زر "تتبع الطلب" لمعرفة خط سير الشاحنة والموقع المباشر.',
+              ),
+              const SizedBox(height: 8),
+              _buildFaqItem(
+                1,
+                'ما هي طرق الدفع المتاحة؟',
+                'نوفر الدفع عبر البطاقات البنكية، والتحويل البنكي المعتمد، بالإضافة إلى خيارات الدفع الآجل للمقاولين والشركات المعتمدة.',
+              ),
+              const SizedBox(height: 8),
+              _buildFaqItem(
+                2,
+                'هل الأسعار تشمل ضريبة القيمة المضافة والشحن؟',
+                'يتم توضيح السعر الأساسي للطن مع حساب ضريبة القيمة المضافة (14%) ورسوم النقل بدقة في ملخص الطلب قبل إتمام الدفع.',
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildContactCard({
+  Widget _buildChannelCard({
     required IconData icon,
+    required Color iconColor,
     required String title,
     required String subtitle,
+    required String actionLabel,
+    required VoidCallback onTap,
   }) {
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.surfaceContainerLowest,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: AppColors.outlineVariant.withValues(alpha: 0.5),
-        ),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AppColors.surfaceVariant),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.03),
+            blurRadius: 8,
+            offset: const Offset(0, 3),
+          ),
+        ],
       ),
       child: Row(
         children: [
           Container(
-            width: 48,
-            height: 48,
-            decoration: const BoxDecoration(
-              color: AppColors.surfaceContainer,
-              shape: BoxShape.circle,
+            width: 44,
+            height: 44,
+            decoration: BoxDecoration(
+              color: iconColor.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(10),
             ),
-            child: Icon(icon, color: AppColors.primary),
+            child: Icon(icon, color: iconColor, size: 22),
           ),
-          const SizedBox(width: 16),
+          const SizedBox(width: 14),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -254,17 +239,18 @@ class _SupportScreenState extends State<SupportScreen> {
                 Text(
                   title,
                   style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.onSurface,
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
                     fontFamily: 'Tajawal',
+                    color: AppColors.onSurface,
                   ),
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 2),
                 Text(
                   subtitle,
+                  textDirection: TextDirection.ltr,
                   style: const TextStyle(
-                    fontSize: 15,
+                    fontSize: 12,
                     color: AppColors.secondary,
                     fontFamily: 'Tajawal',
                   ),
@@ -272,71 +258,64 @@ class _SupportScreenState extends State<SupportScreen> {
               ],
             ),
           ),
+          ElevatedButton(
+            onPressed: onTap,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primaryContainer,
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+              elevation: 0,
+            ),
+            child: Text(
+              actionLabel,
+              style: const TextStyle(fontSize: 12, fontFamily: 'Tajawal'),
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildFAQItem({
-    required int index,
-    required String title,
-    required String content,
-  }) {
+  Widget _buildFaqItem(int index, String question, String answer) {
     final isExpanded = _expandedState[index] ?? false;
-
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.surfaceContainerLowest,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: AppColors.outlineVariant.withValues(alpha: 0.3),
-        ),
+        border: Border.all(color: AppColors.surfaceVariant),
       ),
-      child: Column(
-        children: [
-          InkWell(
-            onTap: () {
-              setState(() {
-                _expandedState[index] = !isExpanded;
-              });
-            },
-            borderRadius: BorderRadius.circular(12),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.w500,
-                      color: AppColors.onSurface,
-                      fontFamily: 'Tajawal',
-                    ),
-                  ),
-                  Icon(
-                    isExpanded ? Icons.expand_less : Icons.expand_more,
-                    color: AppColors.secondary,
-                  ),
-                ],
-              ),
+      child: Theme(
+        data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+        child: ExpansionTile(
+          initiallyExpanded: isExpanded,
+          onExpansionChanged: (val) => setState(() => _expandedState[index] = val),
+          title: Text(
+            question,
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              fontFamily: 'Tajawal',
+              color: AppColors.onSurface,
             ),
           ),
-          if (isExpanded)
+          children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(20, 4, 20, 16),
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
               child: Text(
-                content,
+                answer,
                 style: const TextStyle(
-                  fontSize: 15,
+                  fontSize: 13,
                   color: AppColors.secondary,
                   fontFamily: 'Tajawal',
                   height: 1.5,
                 ),
               ),
             ),
-        ],
+          ],
+        ),
       ),
     );
   }

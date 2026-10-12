@@ -45,7 +45,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
     return BlocListener<AuthCubit, AuthState>(
       listener: (context, state) {
-        if (state.status == AuthStatus.authenticated) context.go('/home');
+        if (state.status == AuthStatus.authenticated) {
+          AppFeedback.showSuccess(context, l10n.loginSuccess);
+          context.go('/home');
+        }
         if (state.status == AuthStatus.failure && state.errorMessage != null) {
           AppFeedback.showError(context, state.errorMessage!);
         }
@@ -228,7 +231,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                               ),
                               GestureDetector(
-                                onTap: () => context.go('/register'),
+                                onTap: () => context.push('/register'),
                                 child: Text(
                                   l10n.createAccount,
                                   style: TextStyle(

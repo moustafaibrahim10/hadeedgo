@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/localization/app_localizations.dart';
 import '../../../../core/theme/app_colors.dart';
 
@@ -55,13 +56,19 @@ class HomeAppBar extends StatelessWidget {
             Semantics(
               label: l10n.profile,
               button: true,
-              child: CircleAvatar(
-                radius: 18.r,
-                backgroundColor: AppColors.primaryFixed,
-                child: Icon(
-                  Icons.person_outline_rounded,
-                  color: AppColors.primary,
-                  size: 21.sp,
+              child: IconButton(
+                onPressed: () => context.go('/profile'),
+                tooltip: l10n.profile,
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(),
+                icon: CircleAvatar(
+                  radius: 18.r,
+                  backgroundColor: AppColors.primaryFixed,
+                  child: Icon(
+                    Icons.person_outline_rounded,
+                    color: AppColors.primary,
+                    size: 21.sp,
+                  ),
                 ),
               ),
             ),

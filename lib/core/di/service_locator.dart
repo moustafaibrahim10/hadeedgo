@@ -24,6 +24,16 @@ import '../../features/orders/data/repositories/orders_repository_impl.dart';
 import '../../features/orders/domain/repositories/orders_repository.dart';
 import '../../features/orders/domain/usecases/orders_usecases.dart';
 import '../../features/orders/presentation/cubits/orders_cubit.dart';
+import '../../features/search/data/datasources/search_api_service.dart';
+import '../../features/search/data/repositories/search_repository_impl.dart';
+import '../../features/search/domain/repositories/search_repository.dart';
+import '../../features/search/domain/usecases/search_usecases.dart';
+import '../../features/search/presentation/cubits/search_cubit.dart';
+import '../../features/profile/data/datasources/account_api_service.dart';
+import '../../features/profile/data/repositories/account_repository_impl.dart';
+import '../../features/profile/domain/repositories/account_repository.dart';
+import '../../features/profile/domain/usecases/account_usecases.dart';
+import '../../features/profile/presentation/cubits/account_cubits.dart';
 import '../network/auth_interceptor.dart';
 import '../storage/session_storage.dart';
 
@@ -41,6 +51,8 @@ Future<void> configureDependencies() async {
     _registerCatalog();
     _registerCart();
     _registerOrders();
+    _registerSearch();
+    _registerAccount();
     return;
   }
 
@@ -63,6 +75,10 @@ Future<void> configureDependencies() async {
   final cartRepository = CartRepositoryImpl(cartApi);
   final ordersApi = OrdersApiService(dio);
   final ordersRepository = OrdersRepositoryImpl(ordersApi);
+  final searchApi = SearchApiService(dio);
+  final searchRepository = SearchRepositoryImpl(searchApi);
+  final accountApi = AccountApiService(dio);
+  final accountRepository = AccountRepositoryImpl(accountApi);
 
   getIt
     ..registerSingleton<SessionStorage>(storage)
@@ -72,6 +88,8 @@ Future<void> configureDependencies() async {
     ..registerSingleton<CatalogRepository>(catalogRepository)
     ..registerSingleton<CartRepository>(cartRepository)
     ..registerSingleton<OrdersRepository>(ordersRepository)
+    ..registerSingleton<SearchRepository>(searchRepository)
+    ..registerSingleton<AccountRepository>(accountRepository)
     ..registerFactory(() => HomeCubit(getIt()))
     ..registerFactory(() => SendOtpUseCase(getIt()))
     ..registerFactory(() => RegisterUseCase(getIt()))
@@ -99,6 +117,7 @@ Future<void> configureDependencies() async {
     ..registerFactory(() => RemoveCartItem(getIt()))
     ..registerFactory(() => ClearCart(getIt()))
     ..registerFactory(() => MergeCartItem(getIt()))
+    ..registerFactory(() => GetActiveOrder(getIt()))
     ..registerFactory(() => CreateOrder(getIt()))
     ..registerFactory(() => GetOrders(getIt()))
     ..registerFactory(() => GetOrder(getIt()))
@@ -110,6 +129,33 @@ Future<void> configureDependencies() async {
       () => CartCubit(getIt(), getIt(), getIt(), getIt(), getIt(), getIt()),
     )
     ..registerLazySingleton(() => CartSummaryCubit(getIt()))
+    ..registerLazySingleton(() => ActiveOrderCubit(getIt()))
+    // Search
+    ..registerFactory(() => GetExplore(getIt()))
+    ..registerFactory(() => GetSearchFilters(getIt()))
+    ..registerFactory(() => SearchProducts(getIt()))
+    ..registerFactory(() => GetRecentSearches(getIt()))
+    ..registerFactory(() => ClearRecentSearches(getIt()))
+    ..registerFactory(() => ExploreCubit(getIt()))
+    ..registerFactory(() => SearchCubit(getIt()))
+    ..registerLazySingleton(() => RecentSearchesCubit(getIt(), getIt()))
+    // Account / Profile
+    ..registerFactory(() => GetAccountSummary(getIt()))
+    ..registerFactory(() => GetProfile(getIt()))
+    ..registerFactory(() => UpdateProfile(getIt()))
+    ..registerFactory(() => GetAddresses(getIt()))
+    ..registerFactory(() => CreateAddress(getIt()))
+    ..registerFactory(() => UpdateAddress(getIt()))
+    ..registerFactory(() => DeleteAddress(getIt()))
+    ..registerFactory(() => GetInvoices(getIt()))
+    ..registerFactory(() => GetInvoiceDetails(getIt()))
+    ..registerFactory(() => GetSupportInfo(getIt()))
+    ..registerFactory(() => AccountSummaryCubit(getIt()))
+    ..registerFactory(() => ProfileCubit(getIt(), getIt()))
+    ..registerFactory(() => AddressesCubit(getIt(), getIt(), getIt(), getIt()))
+    ..registerFactory(() => InvoicesCubit(getIt()))
+    ..registerFactory(() => InvoiceDetailsCubit(getIt()))
+    ..registerFactory(() => SupportCubit(getIt()))
     ..registerSingleton<AuthCubit>(
       AuthCubit(
         sendOtp: getIt(),
@@ -128,6 +174,12 @@ void _registerOrders() {
     getIt.registerSingleton<OrdersRepository>(
       OrdersRepositoryImpl(OrdersApiService(getIt<Dio>())),
     );
+  }
+  if (!getIt.isRegistered<GetActiveOrder>()) {
+    getIt.registerFactory(() => GetActiveOrder(getIt()));
+  }
+  if (!getIt.isRegistered<ActiveOrderCubit>()) {
+    getIt.registerLazySingleton(() => ActiveOrderCubit(getIt()));
   }
   if (!getIt.isRegistered<CreateOrder>()) {
     getIt.registerFactory(() => CreateOrder(getIt()));
@@ -188,4 +240,44 @@ void _registerCart() {
       () => CartCubit(getIt(), getIt(), getIt(), getIt(), getIt(), getIt()),
     )
     ..registerLazySingleton(() => CartSummaryCubit(getIt()));
+}
+
+void _registerSearch() {
+  if (getIt.isRegistered<SearchRepository>()) return;
+  getIt.registerSingleton<SearchRepository>(
+    SearchRepositoryImpl(SearchApiService(getIt<Dio>())),
+  );
+  getIt
+    ..registerFactory(() => GetExplore(getIt()))
+    ..registerFactory(() => GetSearchFilters(getIt()))
+    ..registerFactory(() => SearchProducts(getIt()))
+    ..registerFactory(() => GetRecentSearches(getIt()))
+    ..registerFactory(() => ClearRecentSearches(getIt()))
+    ..registerFactory(() => ExploreCubit(getIt()))
+    ..registerFactory(() => SearchCubit(getIt()))
+    ..registerLazySingleton(() => RecentSearchesCubit(getIt(), getIt()));
+}
+
+void _registerAccount() {
+  if (getIt.isRegistered<AccountRepository>()) return;
+  getIt.registerSingleton<AccountRepository>(
+    AccountRepositoryImpl(AccountApiService(getIt<Dio>())),
+  );
+  getIt
+    ..registerFactory(() => GetAccountSummary(getIt()))
+    ..registerFactory(() => GetProfile(getIt()))
+    ..registerFactory(() => UpdateProfile(getIt()))
+    ..registerFactory(() => GetAddresses(getIt()))
+    ..registerFactory(() => CreateAddress(getIt()))
+    ..registerFactory(() => UpdateAddress(getIt()))
+    ..registerFactory(() => DeleteAddress(getIt()))
+    ..registerFactory(() => GetInvoices(getIt()))
+    ..registerFactory(() => GetInvoiceDetails(getIt()))
+    ..registerFactory(() => GetSupportInfo(getIt()))
+    ..registerFactory(() => AccountSummaryCubit(getIt()))
+    ..registerFactory(() => ProfileCubit(getIt(), getIt()))
+    ..registerFactory(() => AddressesCubit(getIt(), getIt(), getIt(), getIt()))
+    ..registerFactory(() => InvoicesCubit(getIt()))
+    ..registerFactory(() => InvoiceDetailsCubit(getIt()))
+    ..registerFactory(() => SupportCubit(getIt()));
 }

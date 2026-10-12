@@ -284,7 +284,11 @@ class CheckoutConfirmationScreen extends StatelessWidget {
                   ElevatedButton(
                     onPressed: createState.isSubmitting
                         ? null
-                        : () => context.read<CreateOrderCubit>().create(),
+                        : () => context.read<CreateOrderCubit>().create(
+                              deliveryMethod: 'Delivery',
+                              deliveryAddressDetails: 'موقع العمل الرئيسي',
+                              deliveryAddressLabel: 'الموقع الرئيسي',
+                            ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primaryContainer,
                       foregroundColor: Colors.white,

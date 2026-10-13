@@ -158,8 +158,8 @@ class SearchResultsPage {
 
 List<T> _list<T>(Object? value, T Function(Map<String, dynamic>) mapper) =>
     value is List
-        ? value.whereType<Map<String, dynamic>>().map(mapper).toList()
-        : const [];
+    ? value.whereType<Map<String, dynamic>>().map(mapper).toList()
+    : const [];
 
 int? _int(Object? value) =>
     value is num ? value.toInt() : int.tryParse(value?.toString() ?? '');

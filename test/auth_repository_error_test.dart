@@ -19,8 +19,7 @@ class _FakeAuthApi implements AuthApiService {
   }
 
   @override
-  dynamic noSuchMethod(Invocation invocation) =>
-      throw UnimplementedError();
+  dynamic noSuchMethod(Invocation invocation) => throw UnimplementedError();
 }
 
 DioException _badRequest(Object body) => DioException(
@@ -55,16 +54,19 @@ void main() {
   }
 
   group('auth 400 handling surfaces the real backend error', () {
-    test('reads the message body instead of the generic "Bad Request"', () async {
-      final failure = await captureRegisterFailure({
-        'success': false,
-        'message': 'Phone already exists',
-      });
+    test(
+      'reads the message body instead of the generic "Bad Request"',
+      () async {
+        final failure = await captureRegisterFailure({
+          'success': false,
+          'message': 'Phone already exists',
+        });
 
-      expect(failure, isA<ServerFailure>());
-      expect(failure.message, 'Phone already exists');
-      expect(failure.message, isNot('Bad Request'));
-    });
+        expect(failure, isA<ServerFailure>());
+        expect(failure.message, 'Phone already exists');
+        expect(failure.message, isNot('Bad Request'));
+      },
+    );
 
     test('maps the app contract errors[] array to field validation', () async {
       final failure = await captureRegisterFailure({
@@ -85,26 +87,32 @@ void main() {
       );
     });
 
-    test('maps ASP.NET ValidationProblemDetails errors{} map to fields', () async {
-      final failure = await captureRegisterFailure({
-        'title': 'One or more validation errors occurred.',
-        'errors': {
-          'Phone': ['The phone number is invalid.'],
-        },
-      });
+    test(
+      'maps ASP.NET ValidationProblemDetails errors{} map to fields',
+      () async {
+        final failure = await captureRegisterFailure({
+          'title': 'One or more validation errors occurred.',
+          'errors': {
+            'Phone': ['The phone number is invalid.'],
+          },
+        });
 
-      expect(failure, isA<FieldValidationFailure>());
-      expect(
-        (failure as FieldValidationFailure).fieldErrors['Phone'],
-        'The phone number is invalid.',
-      );
-    });
+        expect(failure, isA<FieldValidationFailure>());
+        expect(
+          (failure as FieldValidationFailure).fieldErrors['Phone'],
+          'The phone number is invalid.',
+        );
+      },
+    );
 
-    test('falls back to the HTTP status message when body has no detail', () async {
-      final failure = await captureRegisterFailure(<String, dynamic>{});
+    test(
+      'falls back to the HTTP status message when body has no detail',
+      () async {
+        final failure = await captureRegisterFailure(<String, dynamic>{});
 
-      expect(failure, isA<ServerFailure>());
-      expect(failure.message, 'Bad Request');
-    });
+        expect(failure, isA<ServerFailure>());
+        expect(failure.message, 'Bad Request');
+      },
+    );
   });
 }

@@ -64,7 +64,9 @@ class CartItem {
       ),
       pricePerTon: priceValue,
       unitPrice: priceValue,
-      lineTotal: _num(json['lineTotal'] ?? offer['lineTotal'] ?? product['lineTotal']),
+      lineTotal: _num(
+        json['lineTotal'] ?? offer['lineTotal'] ?? product['lineTotal'],
+      ),
       currency: value<String>('currency'),
       unit: value<String>('unit'),
       quantity: _int(json['quantity']) ?? 0,
@@ -119,8 +121,8 @@ class Cart {
     final rawItems = source['items'] ?? source['cartItems'] ?? const [];
     return Cart(
       id: source['id']?.toString(),
-      itemCount: _int(source['itemCount']) ??
-          (rawItems is List ? rawItems.length : 0),
+      itemCount:
+          _int(source['itemCount']) ?? (rawItems is List ? rawItems.length : 0),
       currency:
           source['currency']?.toString() ?? checkout['currency']?.toString(),
       items: rawItems is List

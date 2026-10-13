@@ -63,7 +63,10 @@ class ExploreView extends StatelessWidget {
               ElevatedButton.icon(
                 onPressed: onRefresh,
                 icon: const Icon(Icons.refresh_rounded),
-                label: const Text('إعادة المحاولة', style: TextStyle(fontFamily: 'Tajawal')),
+                label: const Text(
+                  'إعادة المحاولة',
+                  style: TextStyle(fontFamily: 'Tajawal'),
+                ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primaryContainer,
                   foregroundColor: Colors.white,
@@ -219,7 +222,8 @@ class ExploreView extends StatelessWidget {
             scrollDirection: Axis.horizontal,
             itemCount: 3,
             separatorBuilder: (_, _) => SizedBox(width: 12.w),
-            itemBuilder: (_, _) => _skeletonBox(width: 130.w, height: 120.h, radius: 14.r),
+            itemBuilder: (_, _) =>
+                _skeletonBox(width: 130.w, height: 120.h, radius: 14.r),
           ),
         ),
       ],
@@ -263,11 +267,7 @@ class _SectionHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Icon(
-          icon,
-          size: 18.sp,
-          color: iconColor ?? AppColors.primary,
-        ),
+        Icon(icon, size: 18.sp, color: iconColor ?? AppColors.primary),
         SizedBox(width: 6.w),
         Expanded(
           child: Text(
@@ -372,10 +372,7 @@ class _CategoryExploreCard extends StatelessWidget {
   final SearchCategory category;
   final VoidCallback onTap;
 
-  const _CategoryExploreCard({
-    required this.category,
-    required this.onTap,
-  });
+  const _CategoryExploreCard({required this.category, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -479,10 +476,7 @@ class _SupplierExploreCard extends StatelessWidget {
   final Supplier supplier;
   final VoidCallback onTap;
 
-  const _SupplierExploreCard({
-    required this.supplier,
-    required this.onTap,
-  });
+  const _SupplierExploreCard({required this.supplier, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -541,9 +535,14 @@ class _SupplierExploreCard extends StatelessWidget {
                   const Spacer(),
                   if (supplier.isVerified)
                     Container(
-                      padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 6.w,
+                        vertical: 2.h,
+                      ),
                       decoration: BoxDecoration(
-                        color: AppColors.primaryContainer.withValues(alpha: 0.1),
+                        color: AppColors.primaryContainer.withValues(
+                          alpha: 0.1,
+                        ),
                         borderRadius: BorderRadius.circular(6.r),
                       ),
                       child: Row(

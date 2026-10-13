@@ -48,19 +48,16 @@ class _AppShellScaffoldState extends State<AppShellScaffold> {
         // the black window background.
         backgroundColor: AppColors.background,
         body: widget.navigationShell,
-        bottomNavigationBar:
-            BlocBuilder<CartSummaryCubit, CartSummaryState>(
-              builder: (context, cartState) {
-                return HomeBottomNavigation(
-                  activeIndex: widget.navigationShell.currentIndex,
-                  cartItemCount: cartState.summary.itemCount,
-                  onItemSelected: _onTabSelected,
-                );
-              },
-            ),
+        bottomNavigationBar: BlocBuilder<CartSummaryCubit, CartSummaryState>(
+          builder: (context, cartState) {
+            return HomeBottomNavigation(
+              activeIndex: widget.navigationShell.currentIndex,
+              cartItemCount: cartState.summary.itemCount,
+              onItemSelected: _onTabSelected,
+            );
+          },
+        ),
       ),
     );
   }
 }
-
-

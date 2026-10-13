@@ -9,10 +9,13 @@ void main() {
     await configureDependencies();
   });
 
-  test('cart cubit is reused across the app instead of recreating on each screen', () {
-    final first = GetIt.instance<CartCubit>();
-    final second = GetIt.instance<CartCubit>();
+  test(
+    'cart cubit is reused across the app instead of recreating on each screen',
+    () {
+      final first = GetIt.instance<CartCubit>();
+      final second = GetIt.instance<CartCubit>();
 
-    expect(identical(first, second), isTrue);
-  });
+      expect(identical(first, second), isTrue);
+    },
+  );
 }

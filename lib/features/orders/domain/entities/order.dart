@@ -46,8 +46,8 @@ class OrderItem {
 
   String displayTitle(bool english) =>
       ((english ? title : titleAr)?.trim().isNotEmpty == true
-          ? (english ? title : titleAr)!
-          : (title ?? titleAr ?? ''));
+      ? (english ? title : titleAr)!
+      : (title ?? titleAr ?? ''));
 }
 
 class OrderStatusEvent {
@@ -153,12 +153,23 @@ class Order {
 
   OrderStatus get statusType {
     switch (status.toLowerCase()) {
-      case 'pending': return OrderStatus.pending;
-      case 'processing': case 'preparing': return OrderStatus.processing;
-      case 'shipped': case 'indelivery': case 'outfordelivery': return OrderStatus.shipped;
-      case 'delivered': case 'completed': return OrderStatus.delivered;
-      case 'cancelled': case 'canceled': return OrderStatus.cancelled;
-      default: return OrderStatus.unknown;
+      case 'pending':
+        return OrderStatus.pending;
+      case 'processing':
+      case 'preparing':
+        return OrderStatus.processing;
+      case 'shipped':
+      case 'indelivery':
+      case 'outfordelivery':
+        return OrderStatus.shipped;
+      case 'delivered':
+      case 'completed':
+        return OrderStatus.delivered;
+      case 'cancelled':
+      case 'canceled':
+        return OrderStatus.cancelled;
+      default:
+        return OrderStatus.unknown;
     }
   }
 }
@@ -263,7 +274,11 @@ class ActiveOrder {
 }
 
 List<T> _list<T>(Object? value, T Function(Map<String, dynamic>) mapper) =>
-    value is List ? value.whereType<Map<String, dynamic>>().map(mapper).toList() : const [];
+    value is List
+    ? value.whereType<Map<String, dynamic>>().map(mapper).toList()
+    : const [];
 String _string(Object? value) => value?.toString() ?? '';
-num? _num(Object? value) => value is num ? value : num.tryParse(value?.toString() ?? '');
-int? _int(Object? value) => value is num ? value.toInt() : int.tryParse(value?.toString() ?? '');
+num? _num(Object? value) =>
+    value is num ? value : num.tryParse(value?.toString() ?? '');
+int? _int(Object? value) =>
+    value is num ? value.toInt() : int.tryParse(value?.toString() ?? '');

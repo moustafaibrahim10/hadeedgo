@@ -24,6 +24,7 @@ import '../../features/orders/data/repositories/orders_repository_impl.dart';
 import '../../features/orders/domain/repositories/orders_repository.dart';
 import '../../features/orders/domain/usecases/orders_usecases.dart';
 import '../../features/orders/presentation/cubits/orders_cubit.dart';
+import '../../features/checkout/presentation/cubits/checkout_cubit.dart';
 import '../../features/search/data/datasources/search_api_service.dart';
 import '../../features/search/data/repositories/search_repository_impl.dart';
 import '../../features/search/domain/repositories/search_repository.dart';
@@ -125,6 +126,7 @@ Future<void> configureDependencies() async {
     ..registerFactory(() => OrdersCubit(getIt()))
     ..registerFactory(() => OrderDetailsCubit(getIt(), getIt()))
     ..registerFactory(() => CreateOrderCubit(getIt()))
+    ..registerFactory(() => CheckoutCubit(getIt(), getIt()))
     ..registerLazySingleton(
       () => CartCubit(getIt(), getIt(), getIt(), getIt(), getIt(), getIt()),
     )
@@ -201,6 +203,9 @@ void _registerOrders() {
   }
   if (!getIt.isRegistered<CreateOrderCubit>()) {
     getIt.registerFactory(() => CreateOrderCubit(getIt()));
+  }
+  if (!getIt.isRegistered<CheckoutCubit>()) {
+    getIt.registerFactory(() => CheckoutCubit(getIt(), getIt()));
   }
 }
 

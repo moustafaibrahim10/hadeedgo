@@ -23,10 +23,7 @@ class CartRepositoryImpl implements CartRepository {
 
   @override
   Future<CartSummary> getSummary() async {
-    final response = await _request(
-      _api.getSummary(),
-      'تعذر تحميل ملخص السلة',
-    );
+    final response = await _request(_api.getSummary(), 'تعذر تحميل ملخص السلة');
     final data = response['data'];
     if (data is! Map<String, dynamic>) {
       throw const FailureException(ServerFailure('تعذر تحميل ملخص السلة'));
@@ -77,9 +74,7 @@ class CartRepositoryImpl implements CartRepository {
     final raw = data['data'];
     if (raw is! Map<String, dynamic>) return getCart();
     final cart = raw['cart'];
-    return Cart.fromJson(
-      cart is Map<String, dynamic> ? cart : raw,
-    );
+    return Cart.fromJson(cart is Map<String, dynamic> ? cart : raw);
   }
 
   Future<Map<String, dynamic>> _request(

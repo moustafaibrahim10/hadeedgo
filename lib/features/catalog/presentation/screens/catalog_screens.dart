@@ -270,11 +270,12 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
 
     final thicknessValues = _thicknessValues(product);
     final sizeValue = _sizeValue(product, _english(context));
-    final quantity = selectedOffer.normalizeQuantity(_quantity == 0
-        ? selectedOffer.defaultQuantity
-        : _quantity);
+    final quantity = selectedOffer.normalizeQuantity(
+      _quantity == 0 ? selectedOffer.defaultQuantity : _quantity,
+    );
 
-    if (thicknessValues.isNotEmpty && _selectedThicknessIndex >= thicknessValues.length) {
+    if (thicknessValues.isNotEmpty &&
+        _selectedThicknessIndex >= thicknessValues.length) {
       _selectedThicknessIndex = 0;
     }
 
@@ -371,7 +372,11 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
     final values = <double>{};
     final regex = RegExp(r'(\d+(?:\.\d+)?)\s*(?:mm|مم)');
     for (final offer in product.offers) {
-      final source = [offer.title, offer.specsSummary, product.specsSummary].join(' ');
+      final source = [
+        offer.title,
+        offer.specsSummary,
+        product.specsSummary,
+      ].join(' ');
       for (final match in regex.allMatches(source)) {
         final value = double.tryParse(match.group(1) ?? '');
         if (value != null) values.add(value);
@@ -394,7 +399,8 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
     for (final value in values) {
       if ((value ?? '').trim().isNotEmpty) {
         final match = RegExp(r'\d+\s*[×xX]\s*\d+').firstMatch(value!);
-        if (match != null) return match.group(0)!.replaceAll('x', '×').replaceAll('X', '×');
+        if (match != null)
+          return match.group(0)!.replaceAll('x', '×').replaceAll('X', '×');
         final simple = RegExp(r'\d+(?:\.\d+)?\s*(?:mm|مم)').firstMatch(value);
         if (simple != null) return simple.group(0)!;
       }
@@ -673,16 +679,23 @@ class _SpecificationsCard extends StatelessWidget {
     final pricePerTon = selectedOffer?.pricePerTon ?? product.pricePerTon;
     final currency = selectedOffer?.currency ?? product.currency;
     final effectivePrice = selectedOffer?.pricePerTon;
-    final displayPrice = pricePerTon == null ? '—' : _formatMoney(pricePerTon, currency);
+    final displayPrice = pricePerTon == null
+        ? '—'
+        : _formatMoney(pricePerTon, currency);
     final totalPrice = selectedOffer?.pricePerTon ?? 0;
     final lastUpdatedWidget = selectedOffer == null
         ? null
-        : (selectedOffer!.lastUpdatedLabel != null || selectedOffer!.lastUpdatedAt != null)
+        : (selectedOffer!.lastUpdatedLabel != null ||
+              selectedOffer!.lastUpdatedAt != null)
         ? Padding(
             padding: EdgeInsets.only(top: 8.h),
             child: Row(
               children: [
-                Icon(Icons.update_outlined, size: 15, color: AppColors.secondary),
+                Icon(
+                  Icons.update_outlined,
+                  size: 15,
+                  color: AppColors.secondary,
+                ),
                 SizedBox(width: 5.w),
                 Text(
                   selectedOffer!.lastUpdatedLabel ??
@@ -736,11 +749,17 @@ class _SpecificationsCard extends StatelessWidget {
               decoration: BoxDecoration(
                 color: AppColors.surfaceVariant.withValues(alpha: 0.35),
                 borderRadius: BorderRadius.circular(9.r),
-                border: Border.all(color: AppColors.outlineVariant.withValues(alpha: 0.7)),
+                border: Border.all(
+                  color: AppColors.outlineVariant.withValues(alpha: 0.7),
+                ),
               ),
               child: Row(
                 children: [
-                  const Icon(Icons.lock_outline_rounded, color: AppColors.secondary, size: 18),
+                  const Icon(
+                    Icons.lock_outline_rounded,
+                    color: AppColors.secondary,
+                    size: 18,
+                  ),
                   SizedBox(width: 8.w),
                   Text(
                     sizeValue,
@@ -787,7 +806,9 @@ class _SpecificationsCard extends StatelessWidget {
               runSpacing: 8.h,
               children: List.generate(thicknessValuesToShow.length, (index) {
                 final value = thicknessValuesToShow[index];
-                final selected = index == selectedThicknessIndex % thicknessValuesToShow.length;
+                final selected =
+                    index ==
+                    selectedThicknessIndex % thicknessValuesToShow.length;
                 return GestureDetector(
                   onTap: () => onThicknessChanged(index),
                   child: Container(
@@ -795,14 +816,20 @@ class _SpecificationsCard extends StatelessWidget {
                     height: 38.h,
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
-                      color: selected ? AppColors.onBackground : Colors.transparent,
+                      color: selected
+                          ? AppColors.onBackground
+                          : Colors.transparent,
                       borderRadius: BorderRadius.circular(999),
                       border: Border.all(
-                        color: selected ? Colors.transparent : AppColors.outlineVariant,
+                        color: selected
+                            ? Colors.transparent
+                            : AppColors.outlineVariant,
                       ),
                     ),
                     child: Text(
-                      value.toStringAsFixed(value.truncateToDouble() == value ? 0 : 1),
+                      value.toStringAsFixed(
+                        value.truncateToDouble() == value ? 0 : 1,
+                      ),
                       style: TextStyle(
                         color: selected ? Colors.white : AppColors.onSurface,
                         fontSize: 13.sp,
@@ -829,17 +856,23 @@ class _SpecificationsCard extends StatelessWidget {
                       alignment: Alignment.center,
                       margin: EdgeInsets.only(left: index == 0 ? 0 : 8.w),
                       decoration: BoxDecoration(
-                        color: selected ? AppColors.primaryFixed : Colors.transparent,
+                        color: selected
+                            ? AppColors.primaryFixed
+                            : Colors.transparent,
                         borderRadius: BorderRadius.circular(10.r),
                         border: Border.all(
-                          color: selected ? AppColors.primary : AppColors.outlineVariant,
+                          color: selected
+                              ? AppColors.primary
+                              : AppColors.outlineVariant,
                           width: selected ? 2 : 1,
                         ),
                       ),
                       child: Text(
                         lengthOptions[index],
                         style: TextStyle(
-                          color: selected ? AppColors.primary : AppColors.onSurface,
+                          color: selected
+                              ? AppColors.primary
+                              : AppColors.onSurface,
                           fontWeight: FontWeight.w700,
                           fontSize: 13.sp,
                           fontFamily: 'Tajawal',
@@ -860,14 +893,18 @@ class _SpecificationsCard extends StatelessWidget {
               decoration: BoxDecoration(
                 color: AppColors.surfaceContainerLow,
                 borderRadius: BorderRadius.circular(12.r),
-                border: Border.all(color: AppColors.outlineVariant.withValues(alpha: 0.7)),
+                border: Border.all(
+                  color: AppColors.outlineVariant.withValues(alpha: 0.7),
+                ),
               ),
               child: Row(
                 children: [
                   Expanded(
                     child: IconButton(
                       onPressed: quantity > (selectedOffer?.minQuantity ?? 1)
-                          ? () => onQuantityChanged(quantity - (selectedOffer?.quantityStep ?? 1))
+                          ? () => onQuantityChanged(
+                              quantity - (selectedOffer?.quantityStep ?? 1),
+                            )
                           : null,
                       icon: const Icon(Icons.remove, color: AppColors.primary),
                     ),
@@ -887,7 +924,9 @@ class _SpecificationsCard extends StatelessWidget {
                   Expanded(
                     child: IconButton(
                       onPressed: quantity < (selectedOffer?.maxQuantity ?? 999)
-                          ? () => onQuantityChanged(quantity + (selectedOffer?.quantityStep ?? 1))
+                          ? () => onQuantityChanged(
+                              quantity + (selectedOffer?.quantityStep ?? 1),
+                            )
                           : null,
                       icon: const Icon(Icons.add, color: AppColors.primary),
                     ),
@@ -899,7 +938,11 @@ class _SpecificationsCard extends StatelessWidget {
           SizedBox(height: 12.h),
           Row(
             children: [
-              Icon(Icons.fact_check_outlined, size: 16, color: AppColors.secondary),
+              Icon(
+                Icons.fact_check_outlined,
+                size: 16,
+                color: AppColors.secondary,
+              ),
               SizedBox(width: 5.w),
               Text(
                 product.supplier.displayName(isEnglish),

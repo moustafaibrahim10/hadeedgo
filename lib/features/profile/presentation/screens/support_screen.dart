@@ -38,8 +38,12 @@ class _SupportScreenState extends State<SupportScreen> {
     final info = state.info;
 
     final phone = info.phone?.isNotEmpty == true ? info.phone! : '19824';
-    final whatsApp = info.whatsApp?.isNotEmpty == true ? info.whatsApp! : '+201001234567';
-    final email = info.email?.isNotEmpty == true ? info.email! : 'support@hadeedgo.com';
+    final whatsApp = info.whatsApp?.isNotEmpty == true
+        ? info.whatsApp!
+        : '+201001234567';
+    final email = info.email?.isNotEmpty == true
+        ? info.email!
+        : 'support@hadeedgo.com';
     final hours = info.workingHours?.isNotEmpty == true
         ? info.workingHours!
         : 'السبت - الخميس: 9:00 ص - 6:00 م';
@@ -79,7 +83,9 @@ class _SupportScreenState extends State<SupportScreen> {
         onRefresh: () => context.read<SupportCubit>().load(),
         color: AppColors.primaryContainer,
         child: SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
+          physics: const AlwaysScrollableScrollPhysics(
+            parent: BouncingScrollPhysics(),
+          ),
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
           child: Column(
             children: [
@@ -147,7 +153,8 @@ class _SupportScreenState extends State<SupportScreen> {
                 title: 'محادثة عبر واتساب',
                 subtitle: whatsApp,
                 actionLabel: 'بدء المحادثة',
-                onTap: () => _launch('https://wa.me/${whatsApp.replaceAll('+', '')}'),
+                onTap: () =>
+                    _launch('https://wa.me/${whatsApp.replaceAll('+', '')}'),
               ),
               const SizedBox(height: 12),
               _buildChannelCard(
@@ -291,7 +298,8 @@ class _SupportScreenState extends State<SupportScreen> {
         data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
         child: ExpansionTile(
           initiallyExpanded: isExpanded,
-          onExpansionChanged: (val) => setState(() => _expandedState[index] = val),
+          onExpansionChanged: (val) =>
+              setState(() => _expandedState[index] = val),
           title: Text(
             question,
             style: const TextStyle(

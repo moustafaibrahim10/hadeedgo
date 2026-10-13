@@ -144,7 +144,7 @@ class _CartContent extends StatelessWidget {
           top: false,
           child: CartSummaryCard(
             cart: state.cart,
-            onCheckout: () => context.push('/checkout-confirmation'),
+            onCheckout: () => context.push('/checkout'),
           ),
         ),
       ],

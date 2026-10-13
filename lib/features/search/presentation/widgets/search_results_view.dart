@@ -58,7 +58,10 @@ class SearchResultsView extends StatelessWidget {
               ElevatedButton.icon(
                 onPressed: onRetry,
                 icon: const Icon(Icons.refresh_rounded),
-                label: const Text('إعادة المحاولة', style: TextStyle(fontFamily: 'Tajawal')),
+                label: const Text(
+                  'إعادة المحاولة',
+                  style: TextStyle(fontFamily: 'Tajawal'),
+                ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primaryContainer,
                   foregroundColor: Colors.white,
@@ -120,7 +123,10 @@ class SearchResultsView extends StatelessWidget {
               OutlinedButton.icon(
                 onPressed: onClear,
                 icon: const Icon(Icons.arrow_back_rounded),
-                label: const Text('العودة للاستكشاف', style: TextStyle(fontFamily: 'Tajawal')),
+                label: const Text(
+                  'العودة للاستكشاف',
+                  style: TextStyle(fontFamily: 'Tajawal'),
+                ),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: AppColors.primaryContainer,
                   side: const BorderSide(color: AppColors.primaryContainer),
@@ -139,7 +145,8 @@ class SearchResultsView extends StatelessWidget {
       controller: scrollController,
       padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 90.h),
       physics: const BouncingScrollPhysics(),
-      itemCount: items.length + 1 + (state.status == SearchStatus.loadingMore ? 1 : 0),
+      itemCount:
+          items.length + 1 + (state.status == SearchStatus.loadingMore ? 1 : 0),
       itemBuilder: (context, index) {
         // Header info at index 0
         if (index == 0) {
@@ -203,7 +210,9 @@ class SearchResultsView extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 12.sp,
                               fontFamily: 'Tajawal',
-                              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                              fontWeight: isSelected
+                                  ? FontWeight.bold
+                                  : FontWeight.normal,
                             ),
                           ),
                           selected: isSelected,
@@ -211,7 +220,9 @@ class SearchResultsView extends StatelessWidget {
                           selectedColor: AppColors.primaryContainer,
                           backgroundColor: Colors.white,
                           labelStyle: TextStyle(
-                            color: isSelected ? Colors.white : AppColors.onSurface,
+                            color: isSelected
+                                ? Colors.white
+                                : AppColors.onSurface,
                           ),
                           side: BorderSide(
                             color: isSelected
@@ -231,7 +242,9 @@ class SearchResultsView extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 12.sp,
                             fontFamily: 'Tajawal',
-                            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                            fontWeight: isSelected
+                                ? FontWeight.bold
+                                : FontWeight.normal,
                           ),
                         ),
                         selected: isSelected,
@@ -239,7 +252,9 @@ class SearchResultsView extends StatelessWidget {
                         selectedColor: AppColors.primaryContainer,
                         backgroundColor: Colors.white,
                         labelStyle: TextStyle(
-                          color: isSelected ? Colors.white : AppColors.onSurface,
+                          color: isSelected
+                              ? Colors.white
+                              : AppColors.onSurface,
                         ),
                         side: BorderSide(
                           color: isSelected
@@ -308,10 +323,7 @@ class _ProductSearchResultCard extends StatelessWidget {
   final Product product;
   final VoidCallback onTap;
 
-  const _ProductSearchResultCard({
-    required this.product,
-    required this.onTap,
-  });
+  const _ProductSearchResultCard({required this.product, required this.onTap});
 
   @override
   Widget build(BuildContext context) {

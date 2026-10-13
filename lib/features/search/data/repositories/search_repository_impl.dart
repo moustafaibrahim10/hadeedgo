@@ -14,12 +14,14 @@ class SearchRepositoryImpl implements SearchRepository {
   // ─── Public API ──────────────────────────────────────────────────────────────
 
   @override
-  Future<ExploreData> getExplore() async =>
-      ExploreData.fromJson(await _data(_api.getExplore(), 'تعذر تحميل صفحة الاستكشاف'));
+  Future<ExploreData> getExplore() async => ExploreData.fromJson(
+    await _data(_api.getExplore(), 'تعذر تحميل صفحة الاستكشاف'),
+  );
 
   @override
-  Future<SearchFilters> getFilters() async =>
-      SearchFilters.fromJson(await _data(_api.getFilters(), 'تعذر تحميل الفلاتر'));
+  Future<SearchFilters> getFilters() async => SearchFilters.fromJson(
+    await _data(_api.getFilters(), 'تعذر تحميل الفلاتر'),
+  );
 
   @override
   Future<SearchResultsPage> search({
@@ -28,20 +30,25 @@ class SearchRepositoryImpl implements SearchRepository {
     String? supplierId,
     int page = 1,
     int pageSize = 20,
-  }) async => SearchResultsPage.fromJson(await _data(
-    _api.search(
-      q: q,
-      categoryId: categoryId,
-      supplierId: supplierId,
-      page: page,
-      pageSize: pageSize,
+  }) async => SearchResultsPage.fromJson(
+    await _data(
+      _api.search(
+        q: q,
+        categoryId: categoryId,
+        supplierId: supplierId,
+        page: page,
+        pageSize: pageSize,
+      ),
+      'تعذر تحميل نتائج البحث',
     ),
-    'تعذر تحميل نتائج البحث',
-  ));
+  );
 
   @override
   Future<List<RecentSearch>> getRecentSearches() async {
-    final data = await _data(_api.getRecentSearches(), 'تعذر تحميل البحث الأخير');
+    final data = await _data(
+      _api.getRecentSearches(),
+      'تعذر تحميل البحث الأخير',
+    );
     final raw = data['items'] ?? data['data'] ?? data;
     if (raw is List) {
       return raw
@@ -66,7 +73,8 @@ class SearchRepositoryImpl implements SearchRepository {
     try {
       final response = await request;
       final raw = response.data;
-      if (raw is! Map<String, dynamic>) throw FailureException(ServerFailure(fallback));
+      if (raw is! Map<String, dynamic>)
+        throw FailureException(ServerFailure(fallback));
       final parsed = ApiResponse<dynamic>.fromJson(raw, null);
       if (!parsed.success) {
         throw FailureException(ServerFailure(parsed.message ?? fallback));
@@ -89,11 +97,13 @@ class SearchRepositoryImpl implements SearchRepository {
       final message = body is Map<String, dynamic>
           ? body['message']?.toString()
           : null;
-      throw FailureException(ServerFailure(
-        message?.isNotEmpty == true
-            ? message!
-            : error.response?.statusMessage ?? fallback,
-      ));
+      throw FailureException(
+        ServerFailure(
+          message?.isNotEmpty == true
+              ? message!
+              : error.response?.statusMessage ?? fallback,
+        ),
+      );
     }
   }
 }

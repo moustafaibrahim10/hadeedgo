@@ -163,7 +163,7 @@ class _FeaturedProductCardState extends State<FeaturedProductCard> {
                     width: double.infinity,
                     height: 38.h,
                     child: ElevatedButton.icon(
-                        onPressed: widget.onAddToCart == null
+                      onPressed: widget.onAddToCart == null
                           ? null
                           : () => widget.onAddToCart!(_quantity),
                       icon: const Icon(Icons.shopping_cart_outlined, size: 16),

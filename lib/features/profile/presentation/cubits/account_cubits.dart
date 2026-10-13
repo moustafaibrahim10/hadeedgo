@@ -46,15 +46,21 @@ class AccountSummaryCubit extends Cubit<AccountSummaryState> {
   AccountSummaryCubit(this._getSummary) : super(const AccountSummaryState());
 
   Future<void> load() async {
-    emit(state.copyWith(status: AccountSummaryStatus.loading, errorMessage: null));
+    emit(
+      state.copyWith(status: AccountSummaryStatus.loading, errorMessage: null),
+    );
     try {
       final summary = await _getSummary();
-      emit(state.copyWith(status: AccountSummaryStatus.success, summary: summary));
+      emit(
+        state.copyWith(status: AccountSummaryStatus.success, summary: summary),
+      );
     } catch (e) {
-      emit(state.copyWith(
-        status: AccountSummaryStatus.failure,
-        errorMessage: _msg(e),
-      ));
+      emit(
+        state.copyWith(
+          status: AccountSummaryStatus.failure,
+          errorMessage: _msg(e),
+        ),
+      );
     }
   }
 }
@@ -97,7 +103,7 @@ class ProfileCubit extends Cubit<ProfileState> {
   final UpdateProfile _updateProfile;
 
   ProfileCubit(this._getProfile, this._updateProfile)
-      : super(const ProfileState());
+    : super(const ProfileState());
 
   Future<void> load() async {
     emit(state.copyWith(status: ProfileStatus.loading, errorMessage: null));
@@ -105,10 +111,9 @@ class ProfileCubit extends Cubit<ProfileState> {
       final profile = await _getProfile();
       emit(state.copyWith(status: ProfileStatus.success, profile: profile));
     } catch (e) {
-      emit(state.copyWith(
-        status: ProfileStatus.failure,
-        errorMessage: _msg(e),
-      ));
+      emit(
+        state.copyWith(status: ProfileStatus.failure, errorMessage: _msg(e)),
+      );
     }
   }
 
@@ -126,17 +131,18 @@ class ProfileCubit extends Cubit<ProfileState> {
         companyName: companyName,
         avatarUrl: avatarUrl,
       );
-      emit(state.copyWith(
-        status: ProfileStatus.updated,
-        profile: updated,
-        successMessage: 'تم تحديث الملف الشخصي بنجاح',
-      ));
+      emit(
+        state.copyWith(
+          status: ProfileStatus.updated,
+          profile: updated,
+          successMessage: 'تم تحديث الملف الشخصي بنجاح',
+        ),
+      );
       return true;
     } catch (e) {
-      emit(state.copyWith(
-        status: ProfileStatus.failure,
-        errorMessage: _msg(e),
-      ));
+      emit(
+        state.copyWith(status: ProfileStatus.failure, errorMessage: _msg(e)),
+      );
       return false;
     }
   }
@@ -194,10 +200,9 @@ class AddressesCubit extends Cubit<AddressesState> {
       final list = await _getAddresses();
       emit(state.copyWith(status: AddressesStatus.success, addresses: list));
     } catch (e) {
-      emit(state.copyWith(
-        status: AddressesStatus.failure,
-        errorMessage: _msg(e),
-      ));
+      emit(
+        state.copyWith(status: AddressesStatus.failure, errorMessage: _msg(e)),
+      );
     }
   }
 
@@ -226,31 +231,39 @@ class AddressesCubit extends Cubit<AddressesState> {
         isDefault: isDefault,
       );
       final updatedList = isDefault
-          ? [created, ...state.addresses.map((a) => a.id == created.id ? a : SavedAddress(
-              id: a.id,
-              label: a.label,
-              governorate: a.governorate,
-              city: a.city,
-              street: a.street,
-              building: a.building,
-              floor: a.floor,
-              apartment: a.apartment,
-              additionalDetails: a.additionalDetails,
-              isDefault: false,
-              formattedAddress: a.formattedAddress,
-            ))]
+          ? [
+              created,
+              ...state.addresses.map(
+                (a) => a.id == created.id
+                    ? a
+                    : SavedAddress(
+                        id: a.id,
+                        label: a.label,
+                        governorate: a.governorate,
+                        city: a.city,
+                        street: a.street,
+                        building: a.building,
+                        floor: a.floor,
+                        apartment: a.apartment,
+                        additionalDetails: a.additionalDetails,
+                        isDefault: false,
+                        formattedAddress: a.formattedAddress,
+                      ),
+              ),
+            ]
           : [...state.addresses, created];
-      emit(state.copyWith(
-        status: AddressesStatus.success,
-        addresses: updatedList,
-        successMessage: 'تم إضافة العنوان بنجاح',
-      ));
+      emit(
+        state.copyWith(
+          status: AddressesStatus.success,
+          addresses: updatedList,
+          successMessage: 'تم إضافة العنوان بنجاح',
+        ),
+      );
       return true;
     } catch (e) {
-      emit(state.copyWith(
-        status: AddressesStatus.failure,
-        errorMessage: _msg(e),
-      ));
+      emit(
+        state.copyWith(status: AddressesStatus.failure, errorMessage: _msg(e)),
+      );
       return false;
     }
   }
@@ -300,17 +313,18 @@ class AddressesCubit extends Cubit<AddressesState> {
         }
         return a;
       }).toList();
-      emit(state.copyWith(
-        status: AddressesStatus.success,
-        addresses: list,
-        successMessage: 'تم تعديل العنوان بنجاح',
-      ));
+      emit(
+        state.copyWith(
+          status: AddressesStatus.success,
+          addresses: list,
+          successMessage: 'تم تعديل العنوان بنجاح',
+        ),
+      );
       return true;
     } catch (e) {
-      emit(state.copyWith(
-        status: AddressesStatus.failure,
-        errorMessage: _msg(e),
-      ));
+      emit(
+        state.copyWith(status: AddressesStatus.failure, errorMessage: _msg(e)),
+      );
       return false;
     }
   }
@@ -320,17 +334,18 @@ class AddressesCubit extends Cubit<AddressesState> {
     try {
       await _deleteAddress(addressId);
       final list = state.addresses.where((a) => a.id != addressId).toList();
-      emit(state.copyWith(
-        status: AddressesStatus.success,
-        addresses: list,
-        successMessage: 'تم حذف العنوان بنجاح',
-      ));
+      emit(
+        state.copyWith(
+          status: AddressesStatus.success,
+          addresses: list,
+          successMessage: 'تم حذف العنوان بنجاح',
+        ),
+      );
       return true;
     } catch (e) {
-      emit(state.copyWith(
-        status: AddressesStatus.failure,
-        errorMessage: _msg(e),
-      ));
+      emit(
+        state.copyWith(status: AddressesStatus.failure, errorMessage: _msg(e)),
+      );
       return false;
     }
   }
@@ -376,15 +391,15 @@ class InvoicesCubit extends Cubit<InvoicesState> {
       final res = await _getInvoices(page: 1, pageSize: pageSize);
       emit(state.copyWith(status: InvoicesStatus.success, page: res));
     } catch (e) {
-      emit(state.copyWith(
-        status: InvoicesStatus.failure,
-        errorMessage: _msg(e),
-      ));
+      emit(
+        state.copyWith(status: InvoicesStatus.failure, errorMessage: _msg(e)),
+      );
     }
   }
 
   Future<void> loadMore() async {
-    if (state.status == InvoicesStatus.loadingMore || !state.page.hasMore) return;
+    if (state.status == InvoicesStatus.loadingMore || !state.page.hasMore)
+      return;
     emit(state.copyWith(status: InvoicesStatus.loadingMore));
     try {
       final next = await _getInvoices(
@@ -399,10 +414,9 @@ class InvoicesCubit extends Cubit<InvoicesState> {
       );
       emit(state.copyWith(status: InvoicesStatus.success, page: merged));
     } catch (e) {
-      emit(state.copyWith(
-        status: InvoicesStatus.success,
-        errorMessage: _msg(e),
-      ));
+      emit(
+        state.copyWith(status: InvoicesStatus.success, errorMessage: _msg(e)),
+      );
     }
   }
 }
@@ -440,18 +454,24 @@ class InvoiceDetailsCubit extends Cubit<InvoiceDetailsState> {
   final GetInvoiceDetails _getInvoiceDetails;
 
   InvoiceDetailsCubit(this._getInvoiceDetails)
-      : super(const InvoiceDetailsState());
+    : super(const InvoiceDetailsState());
 
   Future<void> load(String orderId) async {
-    emit(state.copyWith(status: InvoiceDetailsStatus.loading, errorMessage: null));
+    emit(
+      state.copyWith(status: InvoiceDetailsStatus.loading, errorMessage: null),
+    );
     try {
       final details = await _getInvoiceDetails(orderId);
-      emit(state.copyWith(status: InvoiceDetailsStatus.success, details: details));
+      emit(
+        state.copyWith(status: InvoiceDetailsStatus.success, details: details),
+      );
     } catch (e) {
-      emit(state.copyWith(
-        status: InvoiceDetailsStatus.failure,
-        errorMessage: _msg(e),
-      ));
+      emit(
+        state.copyWith(
+          status: InvoiceDetailsStatus.failure,
+          errorMessage: _msg(e),
+        ),
+      );
     }
   }
 }
@@ -496,10 +516,9 @@ class SupportCubit extends Cubit<SupportState> {
       final info = await _getSupport();
       emit(state.copyWith(status: SupportStatus.success, info: info));
     } catch (e) {
-      emit(state.copyWith(
-        status: SupportStatus.failure,
-        errorMessage: _msg(e),
-      ));
+      emit(
+        state.copyWith(status: SupportStatus.failure, errorMessage: _msg(e)),
+      );
     }
   }
 }

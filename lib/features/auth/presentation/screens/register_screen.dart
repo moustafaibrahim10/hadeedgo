@@ -73,10 +73,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   void _submit() {
     if (!(_formKey.currentState?.validate() ?? false) || !_acceptTerms) return;
     if (_otp.text.trim().isEmpty) {
-      AppFeedback.showError(
-        context,
-        AppLocalizations.of(context).requiredOtp,
-      );
+      AppFeedback.showError(context, AppLocalizations.of(context).requiredOtp);
       return;
     }
     context.read<AuthCubit>().register(
@@ -256,8 +253,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               keyboardType: TextInputType.phone,
                               textDirection: TextDirection.ltr,
                               errorText: state.fieldErrors['phone'],
-                              validator: (v) =>
-                                  v == null || v.trim().isEmpty
+                              validator: (v) => v == null || v.trim().isEmpty
                                   ? l10n.requiredPhone
                                   : null,
                             ),
@@ -277,7 +273,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     borderRadius: BorderRadius.circular(12.r),
                                   ),
                                 ),
-                                icon: busy &&
+                                icon:
+                                    busy &&
                                         state.operation ==
                                             AuthOperation.sendingOtp
                                     ? SizedBox(
@@ -303,8 +300,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 keyboardType: TextInputType.number,
                                 textDirection: TextDirection.ltr,
                                 errorText: state.fieldErrors['otpCode'],
-                                validator: (v) =>
-                                    v == null || v.trim().isEmpty
+                                validator: (v) => v == null || v.trim().isEmpty
                                     ? l10n.requiredOtp
                                     : null,
                               ),
@@ -334,8 +330,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               width: double.infinity,
                               height: 52.h,
                               child: ElevatedButton(
-                                onPressed:
-                                    busy || !_acceptTerms ? null : _submit,
+                                onPressed: busy || !_acceptTerms
+                                    ? null
+                                    : _submit,
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: AppColors.primaryContainer,
                                   foregroundColor: Colors.white,

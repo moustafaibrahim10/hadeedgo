@@ -69,10 +69,7 @@ class _SearchScreenState extends State<SearchScreen> {
       TextPosition(offset: query.length),
     );
     _searchFocusNode.unfocus();
-    context.read<SearchCubit>().search(
-          q: query.trim(),
-          categoryId: categoryId,
-        );
+    context.read<SearchCubit>().search(q: query.trim(), categoryId: categoryId);
   }
 
   void _clearSearch() {
@@ -94,7 +91,8 @@ class _SearchScreenState extends State<SearchScreen> {
           : exploreState.data.recentSearches,
     );
 
-    final isSearching = _searchController.text.trim().isNotEmpty ||
+    final isSearching =
+        _searchController.text.trim().isNotEmpty ||
         searchState.status != SearchStatus.initial;
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
@@ -134,11 +132,12 @@ class _SearchScreenState extends State<SearchScreen> {
                   filterCategories: exploreState.data.categories,
                   onSelectCategoryFilter: (categoryId) {
                     context.read<SearchCubit>().search(
-                          q: _searchController.text.trim(),
-                          categoryId: categoryId,
-                        );
+                      q: _searchController.text.trim(),
+                      categoryId: categoryId,
+                    );
                   },
-                  onSelectProduct: (product) => context.push('/products/${product.id}'),
+                  onSelectProduct: (product) =>
+                      context.push('/products/${product.id}'),
                   onRetry: () => _triggerSearch(_searchController.text),
                   onClear: _clearSearch,
                 )

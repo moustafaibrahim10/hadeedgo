@@ -29,10 +29,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     final displayName = profile.fullName?.trim().isNotEmpty == true
         ? profile.fullName!
-        : (user?.fullName?.trim().isNotEmpty == true ? user!.fullName! : 'HadeedGo');
+        : (user?.fullName?.trim().isNotEmpty == true
+              ? user!.fullName!
+              : 'HadeedGo');
 
-    final isPhoneVerified = profile.isPhoneVerified || (user?.isPhoneVerified == true);
-    final verificationLabel = isPhoneVerified ? 'الهاتف موثق' : 'الهاتف غير موثق';
+    final isPhoneVerified =
+        profile.isPhoneVerified || (user?.isPhoneVerified == true);
+    final verificationLabel = isPhoneVerified
+        ? 'الهاتف موثق'
+        : 'الهاتف غير موثق';
     final avatarUrl = profile.avatarUrl;
 
     return Scaffold(
@@ -157,7 +162,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
-                      color: AppColors.secondaryContainer.withValues(alpha: 0.3),
+                      color: AppColors.secondaryContainer.withValues(
+                        alpha: 0.3,
+                      ),
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(
                         color: AppColors.secondary.withValues(alpha: 0.2),
@@ -239,72 +246,74 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ],
               ),
-            const SizedBox(height: 24),
+              const SizedBox(height: 24),
 
-            // Support Group
-            _buildSectionHeader('المساعدة والدعم'),
-            _IosListGroup(
-              children: [
-                _IosListItem(
-                  icon: Icons.support_agent_outlined,
-                  iconColor: AppColors.secondary,
-                  iconBgColor: AppColors.secondaryFixed,
-                  title: 'الدعم الفني',
-                  onTap: () => context.push('/support'),
-                  showBorder: false,
-                ),
-              ],
-            ),
-            const SizedBox(height: 24),
-
-            // Legal Group
-            _buildSectionHeader('معلومات قانونية'),
-            _IosListGroup(
-              children: [
-                _IosListItem(
-                  icon: Icons.gavel_outlined,
-                  iconColor: AppColors.tertiary,
-                  iconBgColor: AppColors.surfaceContainer,
-                  title: 'شروط الخدمة',
-                  onTap: () {},
-                ),
-                _IosListItem(
-                  icon: Icons.policy_outlined,
-                  iconColor: AppColors.tertiary,
-                  iconBgColor: AppColors.surfaceContainer,
-                  title: 'سياسة الخصوصية',
-                  onTap: () {},
-                ),
-                _IosListItem(
-                  icon: Icons.logout,
-                  iconColor: AppColors.error,
-                  iconBgColor: AppColors.errorContainer.withValues(alpha: 0.3),
-                  title: 'تسجيل الخروج',
-                  titleColor: AppColors.error,
-                  onTap: () => _confirmLogout(context),
-                  showChevron: false,
-                  showBorder: false,
-                ),
-              ],
-            ),
-            const SizedBox(height: 32),
-
-            // Version Info
-            Text(
-              'إصدار التطبيق 1.0.4 (Build 420)',
-              style: TextStyle(
-                fontSize: 11,
-                color: AppColors.onSurfaceVariant.withValues(alpha: 0.7),
-                fontFamily: 'Tajawal',
+              // Support Group
+              _buildSectionHeader('المساعدة والدعم'),
+              _IosListGroup(
+                children: [
+                  _IosListItem(
+                    icon: Icons.support_agent_outlined,
+                    iconColor: AppColors.secondary,
+                    iconBgColor: AppColors.secondaryFixed,
+                    title: 'الدعم الفني',
+                    onTap: () => context.push('/support'),
+                    showBorder: false,
+                  ),
+                ],
               ),
-            ),
-            const SizedBox(height: 40),
-          ],
+              const SizedBox(height: 24),
+
+              // Legal Group
+              _buildSectionHeader('معلومات قانونية'),
+              _IosListGroup(
+                children: [
+                  _IosListItem(
+                    icon: Icons.gavel_outlined,
+                    iconColor: AppColors.tertiary,
+                    iconBgColor: AppColors.surfaceContainer,
+                    title: 'شروط الخدمة',
+                    onTap: () {},
+                  ),
+                  _IosListItem(
+                    icon: Icons.policy_outlined,
+                    iconColor: AppColors.tertiary,
+                    iconBgColor: AppColors.surfaceContainer,
+                    title: 'سياسة الخصوصية',
+                    onTap: () {},
+                  ),
+                  _IosListItem(
+                    icon: Icons.logout,
+                    iconColor: AppColors.error,
+                    iconBgColor: AppColors.errorContainer.withValues(
+                      alpha: 0.3,
+                    ),
+                    title: 'تسجيل الخروج',
+                    titleColor: AppColors.error,
+                    onTap: () => _confirmLogout(context),
+                    showChevron: false,
+                    showBorder: false,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 32),
+
+              // Version Info
+              Text(
+                'إصدار التطبيق 1.0.4 (Build 420)',
+                style: TextStyle(
+                  fontSize: 11,
+                  color: AppColors.onSurfaceVariant.withValues(alpha: 0.7),
+                  fontFamily: 'Tajawal',
+                ),
+              ),
+              const SizedBox(height: 40),
+            ],
+          ),
         ),
       ),
-    ),
-  );
-}
+    );
+  }
 
   /// Shows a confirmation dialog, then performs logout. The router's
   /// `refreshListenable` reacts to the resulting `unauthenticated` state and
@@ -314,9 +323,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       context: context,
       builder: (dialogContext) => AlertDialog(
         backgroundColor: AppColors.surfaceContainerLowest,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: const Text(
           'تسجيل الخروج',
           style: TextStyle(
@@ -334,7 +341,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
             onPressed: () => Navigator.of(dialogContext).pop(false),
             child: const Text(
               'إلغاء',
-              style: TextStyle(fontFamily: 'Tajawal', color: AppColors.secondary),
+              style: TextStyle(
+                fontFamily: 'Tajawal',
+                color: AppColors.secondary,
+              ),
             ),
           ),
           TextButton(
@@ -356,7 +366,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       await context.read<AuthCubit>().logout();
     }
   }
-
 
   Widget _buildSectionHeader(String title) {
     return Padding(

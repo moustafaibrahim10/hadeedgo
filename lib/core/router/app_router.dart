@@ -26,6 +26,7 @@ import '../../features/catalog/presentation/screens/catalog_screens.dart';
 import '../../features/orders/presentation/screens/orders_screen.dart';
 import '../../features/orders/presentation/screens/order_details_screen.dart';
 import '../../features/orders/presentation/cubits/orders_cubit.dart';
+import '../../features/orders/domain/entities/order.dart';
 import '../../features/cart/presentation/screens/cart_screen.dart';
 import '../../features/cart/presentation/cubits/cart_cubit.dart';
 
@@ -40,7 +41,9 @@ import '../../features/profile/presentation/cubits/account_cubits.dart';
 // Checkout Feature
 import '../../features/checkout/presentation/screens/delivery_method_screen.dart';
 import '../../features/checkout/presentation/screens/secure_payment_screen.dart';
+import '../../features/checkout/presentation/screens/checkout_screen.dart';
 import '../../features/checkout/presentation/screens/checkout_confirmation_screen.dart';
+import '../../features/checkout/presentation/cubits/checkout_cubit.dart';
 import '../../features/checkout/presentation/screens/pickup_time_screen.dart';
 import '../../features/checkout/presentation/screens/delivery_location_screen.dart';
 import '../../features/checkout/presentation/screens/tax_invoice_screen.dart';
@@ -169,9 +172,7 @@ class AppRouter {
                       BlocProvider.value(
                         value: di.getIt<RecentSearchesCubit>()..load(),
                       ),
-                      BlocProvider.value(
-                        value: di.getIt<CartCubit>()..load(),
-                      ),
+                      BlocProvider.value(value: di.getIt<CartCubit>()..load()),
                     ],
                     child: const SearchScreen(),
                   ),
@@ -286,7 +287,9 @@ class AppRouter {
           path: '/orders/:id',
           name: 'order-details',
           builder: (context, state) => BlocProvider(
-            create: (_) => di.getIt<OrderDetailsCubit>()..load(state.pathParameters['id']!),
+            create: (_) =>
+                di.getIt<OrderDetailsCubit>()
+                  ..load(state.pathParameters['id']!),
             child: OrderDetailsScreen(id: state.pathParameters['id']!),
           ),
         ),
@@ -294,8 +297,13 @@ class AppRouter {
           path: '/orders/:id/tracking',
           name: 'order-tracking',
           builder: (context, state) => BlocProvider(
-            create: (_) => di.getIt<OrderDetailsCubit>()..load(state.pathParameters['id']!),
-            child: OrderDetailsScreen(id: state.pathParameters['id']!, trackingOnly: true),
+            create: (_) =>
+                di.getIt<OrderDetailsCubit>()
+                  ..load(state.pathParameters['id']!),
+            child: OrderDetailsScreen(
+              id: state.pathParameters['id']!,
+              trackingOnly: true,
+            ),
           ),
         ),
         // --- Profile Routes (detail screens open full-screen, outside shell) ---
@@ -331,6 +339,25 @@ class AppRouter {
 
         // --- Checkout Routes ---
         GoRoute(
+          path: '/checkout',
+          name: 'checkout',
+          builder: (context, state) => MultiBlocProvider(
+            providers: [
+              BlocProvider(create: (_) => di.getIt<CheckoutCubit>()),
+              BlocProvider.value(value: di.getIt<CartCubit>()..load()),
+              BlocProvider.value(value: di.getIt<CartSummaryCubit>()..load()),
+            ],
+            child: const CheckoutScreen(),
+          ),
+        ),
+        GoRoute(
+          path: '/checkout-confirmation',
+          name: 'checkout-confirmation',
+          builder: (context, state) => CheckoutConfirmationScreen(
+            order: state.extra is Order ? state.extra as Order : null,
+          ),
+        ),
+        GoRoute(
           path: '/delivery-method',
           name: 'delivery-method',
           builder: (context, state) => const DeliveryMethodScreen(),
@@ -339,14 +366,6 @@ class AppRouter {
           path: '/secure-payment',
           name: 'secure-payment',
           builder: (context, state) => const SecurePaymentScreen(),
-        ),
-        GoRoute(
-          path: '/checkout-confirmation',
-          name: 'checkout-confirmation',
-          builder: (context, state) => BlocProvider(
-            create: (_) => di.getIt<CreateOrderCubit>(),
-            child: const CheckoutConfirmationScreen(),
-          ),
         ),
         GoRoute(
           path: '/pickup-time',

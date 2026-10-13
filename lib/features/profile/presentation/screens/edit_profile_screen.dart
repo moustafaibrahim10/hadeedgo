@@ -100,7 +100,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             ),
             actions: [
               IconButton(
-                icon: const Icon(Icons.arrow_forward, color: AppColors.onSurface),
+                icon: const Icon(
+                  Icons.arrow_forward,
+                  color: AppColors.onSurface,
+                ),
                 onPressed: () => context.pop(),
               ),
             ],
@@ -143,12 +146,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                       decoration: BoxDecoration(
                                         shape: BoxShape.circle,
                                         border: Border.all(
-                                          color: AppColors.surfaceContainerLowest,
+                                          color:
+                                              AppColors.surfaceContainerLowest,
                                           width: 4,
                                         ),
                                         boxShadow: [
                                           BoxShadow(
-                                            color: Colors.black.withValues(alpha: 0.05),
+                                            color: Colors.black.withValues(
+                                              alpha: 0.05,
+                                            ),
                                             blurRadius: 4,
                                           ),
                                         ],
@@ -160,9 +166,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                                 fit: BoxFit.cover,
                                                 errorBuilder: (_, _, _) =>
                                                     Image.asset(
-                                                  'assets/photos/png/onboarding1.png',
-                                                  fit: BoxFit.cover,
-                                                ),
+                                                      'assets/photos/png/onboarding1.png',
+                                                      fit: BoxFit.cover,
+                                                    ),
                                               )
                                             : Image.asset(
                                                 'assets/photos/png/onboarding1.png',
@@ -180,7 +186,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                           shape: BoxShape.circle,
                                           boxShadow: [
                                             BoxShadow(
-                                              color: Colors.black.withValues(alpha: 0.1),
+                                              color: Colors.black.withValues(
+                                                alpha: 0.1,
+                                              ),
                                               blurRadius: 4,
                                               offset: const Offset(0, 2),
                                             ),
@@ -225,7 +233,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             icon: Icons.phone_outlined,
                             isReadOnly: true,
                             isLtr: true,
-                            helperText: profile.isPhoneVerified ? 'تم التحقق من رقم الهاتف' : null,
+                            helperText: profile.isPhoneVerified
+                                ? 'تم التحقق من رقم الهاتف'
+                                : null,
                           ),
                           const SizedBox(height: 16),
                           _buildField(
@@ -256,7 +266,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           color: Colors.white,
                           border: Border(
                             top: BorderSide(
-                              color: AppColors.outlineVariant.withValues(alpha: 0.3),
+                              color: AppColors.outlineVariant.withValues(
+                                alpha: 0.3,
+                              ),
                               width: 0.5,
                             ),
                           ),
@@ -266,10 +278,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               ? null
                               : () {
                                   context.read<ProfileCubit>().update(
-                                        fullName: _nameController.text.trim(),
-                                        email: _emailController.text.trim(),
-                                        companyName: _companyController.text.trim(),
-                                      );
+                                    fullName: _nameController.text.trim(),
+                                    email: _emailController.text.trim(),
+                                    companyName: _companyController.text.trim(),
+                                  );
                                 },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.primaryContainer,

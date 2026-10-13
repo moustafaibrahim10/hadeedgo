@@ -39,7 +39,9 @@ class _TaxInvoiceScreenState extends State<TaxInvoiceScreen> {
         elevation: 0,
         centerTitle: true,
         title: Text(
-          _selectedOrderId != null ? 'تفاصيل الفاتورة الضريبية' : 'الفواتير الضريبية',
+          _selectedOrderId != null
+              ? 'تفاصيل الفاتورة الضريبية'
+              : 'الفواتير الضريبية',
           style: const TextStyle(
             fontSize: 22,
             fontWeight: FontWeight.bold,
@@ -96,7 +98,13 @@ class _TaxInvoiceScreenState extends State<TaxInvoiceScreen> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primaryContainer,
                   ),
-                  child: const Text('إعادة المحاولة', style: TextStyle(color: Colors.white, fontFamily: 'Tajawal')),
+                  child: const Text(
+                    'إعادة المحاولة',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontFamily: 'Tajawal',
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -111,7 +119,11 @@ class _TaxInvoiceScreenState extends State<TaxInvoiceScreen> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.receipt_long_outlined, size: 64, color: AppColors.secondary),
+                  Icon(
+                    Icons.receipt_long_outlined,
+                    size: 64,
+                    color: AppColors.secondary,
+                  ),
                   const SizedBox(height: 16),
                   const Text(
                     'لا توجد فواتير ضريبية صادرة بعد',
@@ -181,11 +193,19 @@ class _TaxInvoiceScreenState extends State<TaxInvoiceScreen> {
                 ),
                 const SizedBox(height: 12),
                 ElevatedButton(
-                  onPressed: () => context.read<InvoiceDetailsCubit>().load(_selectedOrderId!),
+                  onPressed: () => context.read<InvoiceDetailsCubit>().load(
+                    _selectedOrderId!,
+                  ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primaryContainer,
                   ),
-                  child: const Text('إعادة المحاولة', style: TextStyle(color: Colors.white, fontFamily: 'Tajawal')),
+                  child: const Text(
+                    'إعادة المحاولة',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontFamily: 'Tajawal',
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -195,7 +215,9 @@ class _TaxInvoiceScreenState extends State<TaxInvoiceScreen> {
         final details = state.details;
         if (details == null) return const SizedBox.shrink();
 
-        final invNumber = details.invoiceNumber ?? 'HG-INV-${details.orderId.substring(0, 6)}';
+        final invNumber =
+            details.invoiceNumber ??
+            'HG-INV-${details.orderId.substring(0, 6)}';
         final dateStr = details.issuedAt != null
             ? '${details.issuedAt!.day}/${details.issuedAt!.month}/${details.issuedAt!.year}'
             : '';
@@ -248,7 +270,10 @@ class _TaxInvoiceScreenState extends State<TaxInvoiceScreen> {
                       ],
                     ),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 4,
+                      ),
                       decoration: BoxDecoration(
                         color: Colors.green.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(8),
@@ -256,7 +281,11 @@ class _TaxInvoiceScreenState extends State<TaxInvoiceScreen> {
                       child: const Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(Icons.check_circle, size: 14, color: Colors.green),
+                          Icon(
+                            Icons.check_circle,
+                            size: 14,
+                            color: Colors.green,
+                          ),
                           SizedBox(width: 4),
                           Text(
                             'مدفوعة',
@@ -296,59 +325,74 @@ class _TaxInvoiceScreenState extends State<TaxInvoiceScreen> {
                   ),
                 ),
                 const SizedBox(height: 10),
-                ...details.lines.map((line) => Container(
-                      margin: const EdgeInsets.only(bottom: 8),
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: AppColors.surfaceContainerLowest,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  line.title ?? 'بند حديد',
-                                  style: const TextStyle(
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w600,
-                                    fontFamily: 'Tajawal',
-                                  ),
+                ...details.lines.map(
+                  (line) => Container(
+                    margin: const EdgeInsets.only(bottom: 8),
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: AppColors.surfaceContainerLowest,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                line.title ?? 'بند حديد',
+                                style: const TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w600,
+                                  fontFamily: 'Tajawal',
                                 ),
-                                Text(
-                                  'الكمية: ${line.quantity ?? 1} طن × ${line.unitPrice ?? 0} $currency',
-                                  style: const TextStyle(
-                                    fontSize: 11,
-                                    color: AppColors.secondary,
-                                    fontFamily: 'Tajawal',
-                                  ),
+                              ),
+                              Text(
+                                'الكمية: ${line.quantity ?? 1} طن × ${line.unitPrice ?? 0} $currency',
+                                style: const TextStyle(
+                                  fontSize: 11,
+                                  color: AppColors.secondary,
+                                  fontFamily: 'Tajawal',
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
-                          Text(
-                            '${line.lineTotal ?? 0} $currency',
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.primaryContainer,
-                              fontFamily: 'Tajawal',
-                            ),
+                        ),
+                        Text(
+                          '${line.lineTotal ?? 0} $currency',
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.primaryContainer,
+                            fontFamily: 'Tajawal',
                           ),
-                        ],
-                      ),
-                    )),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
                 const Divider(height: 28),
 
                 // Totals
                 _amountRow('المجموع الفرعي:', details.subTotal, currency),
                 if (details.deliveryFee != null && details.deliveryFee! > 0)
-                  _amountRow('رسوم الشحن والتوصيل:', details.deliveryFee, currency),
-                _amountRow('ضريبة القيمة المضافة (14%):', details.taxAmount, currency),
+                  _amountRow(
+                    'رسوم الشحن والتوصيل:',
+                    details.deliveryFee,
+                    currency,
+                  ),
+                _amountRow(
+                  'ضريبة القيمة المضافة (14%):',
+                  details.taxAmount,
+                  currency,
+                ),
                 const Divider(height: 16),
-                _amountRow('الإجمالي الكلي:', details.totalAmount, currency, isBold: true),
+                _amountRow(
+                  'الإجمالي الكلي:',
+                  details.totalAmount,
+                  currency,
+                  isBold: true,
+                ),
               ],
             ),
           ),
@@ -363,14 +407,33 @@ class _TaxInvoiceScreenState extends State<TaxInvoiceScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: const TextStyle(fontSize: 13, color: AppColors.secondary, fontFamily: 'Tajawal')),
-          Text(value, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, fontFamily: 'Tajawal')),
+          Text(
+            label,
+            style: const TextStyle(
+              fontSize: 13,
+              color: AppColors.secondary,
+              fontFamily: 'Tajawal',
+            ),
+          ),
+          Text(
+            value,
+            style: const TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              fontFamily: 'Tajawal',
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Widget _amountRow(String label, num? amount, String currency, {bool isBold = false}) {
+  Widget _amountRow(
+    String label,
+    num? amount,
+    String currency, {
+    bool isBold = false,
+  }) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
@@ -407,7 +470,8 @@ class _InvoiceListItemCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final invNumber = invoice.invoiceNumber ?? 'HG-INV-${invoice.orderId.substring(0, 6)}';
+    final invNumber =
+        invoice.invoiceNumber ?? 'HG-INV-${invoice.orderId.substring(0, 6)}';
     final dateStr = invoice.issuedAt != null
         ? '${invoice.issuedAt!.day}/${invoice.issuedAt!.month}/${invoice.issuedAt!.year}'
         : '';
@@ -434,7 +498,11 @@ class _InvoiceListItemCard extends StatelessWidget {
                   color: AppColors.primaryFixed,
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(Icons.receipt_long, color: AppColors.primary, size: 22),
+                child: const Icon(
+                  Icons.receipt_long,
+                  color: AppColors.primary,
+                  size: 22,
+                ),
               ),
               const SizedBox(width: 14),
               Expanded(
@@ -474,7 +542,11 @@ class _InvoiceListItemCard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 2),
-                  const Icon(Icons.arrow_forward_ios, size: 12, color: AppColors.secondary),
+                  const Icon(
+                    Icons.arrow_forward_ios,
+                    size: 12,
+                    color: AppColors.secondary,
+                  ),
                 ],
               ),
             ],

@@ -45,10 +45,7 @@ void main() {
   group('AccountSummary parsing', () {
     test('wraps a nested profile and counts', () {
       final summary = AccountSummary.fromJson({
-        'profile': {
-          'id': 'user-1',
-          'fullName': 'أحمد',
-        },
+        'profile': {'id': 'user-1', 'fullName': 'أحمد'},
         'savedAddressCount': 3,
         'taxInvoiceCount': 5,
       });
@@ -91,10 +88,7 @@ void main() {
     });
 
     test('builds an address line when formattedAddress is missing', () {
-      final address = SavedAddress.fromJson({
-        'id': 'addr-2',
-        'city': 'الجيزة',
-      });
+      final address = SavedAddress.fromJson({'id': 'addr-2', 'city': 'الجيزة'});
 
       expect(address.displayTitle(), 'الجيزة');
       expect(address.displayFullAddress(), contains('الجيزة'));
@@ -213,4 +207,3 @@ void main() {
     });
   });
 }
-

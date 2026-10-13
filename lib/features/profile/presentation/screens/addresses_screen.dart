@@ -24,13 +24,19 @@ class _AddressesScreenState extends State<AddressesScreen> {
   void _showAddressDialog({SavedAddress? addressToEdit}) {
     final isEditing = addressToEdit != null;
     final labelCtrl = TextEditingController(text: addressToEdit?.label ?? '');
-    final govCtrl = TextEditingController(text: addressToEdit?.governorate ?? '');
+    final govCtrl = TextEditingController(
+      text: addressToEdit?.governorate ?? '',
+    );
     final cityCtrl = TextEditingController(text: addressToEdit?.city ?? '');
     final streetCtrl = TextEditingController(text: addressToEdit?.street ?? '');
-    final buildingCtrl = TextEditingController(text: addressToEdit?.building ?? '');
+    final buildingCtrl = TextEditingController(
+      text: addressToEdit?.building ?? '',
+    );
     final floorCtrl = TextEditingController(text: addressToEdit?.floor ?? '');
     final aptCtrl = TextEditingController(text: addressToEdit?.apartment ?? '');
-    final detailsCtrl = TextEditingController(text: addressToEdit?.additionalDetails ?? '');
+    final detailsCtrl = TextEditingController(
+      text: addressToEdit?.additionalDetails ?? '',
+    );
     bool isDefault = addressToEdit?.isDefault ?? false;
 
     showModalBottomSheet(
@@ -72,7 +78,10 @@ class _AddressesScreenState extends State<AddressesScreen> {
                   ],
                 ),
                 const SizedBox(height: 16),
-                _inputField('تسمية العنوان (مثال: موقع المشروع، المخزن)', labelCtrl),
+                _inputField(
+                  'تسمية العنوان (مثال: موقع المشروع، المخزن)',
+                  labelCtrl,
+                ),
                 const SizedBox(height: 12),
                 Row(
                   children: [
@@ -94,7 +103,11 @@ class _AddressesScreenState extends State<AddressesScreen> {
                   ],
                 ),
                 const SizedBox(height: 12),
-                _inputField('تفاصيل إضافية / علامة مميزة', detailsCtrl, maxLines: 2),
+                _inputField(
+                  'تفاصيل إضافية / علامة مميزة',
+                  detailsCtrl,
+                  maxLines: 2,
+                ),
                 const SizedBox(height: 12),
                 SwitchListTile(
                   contentPadding: EdgeInsets.zero,
@@ -109,38 +122,41 @@ class _AddressesScreenState extends State<AddressesScreen> {
                 const SizedBox(height: 16),
                 ElevatedButton(
                   onPressed: () async {
-                    if (cityCtrl.text.trim().isEmpty && streetCtrl.text.trim().isEmpty) {
+                    if (cityCtrl.text.trim().isEmpty &&
+                        streetCtrl.text.trim().isEmpty) {
                       ScaffoldMessenger.of(sheetContext).showSnackBar(
-                        const SnackBar(content: Text('يرجى إدخال اسم المدينة أو الشارع')),
+                        const SnackBar(
+                          content: Text('يرجى إدخال اسم المدينة أو الشارع'),
+                        ),
                       );
                       return;
                     }
                     Navigator.pop(sheetContext);
                     if (isEditing) {
                       await this.context.read<AddressesCubit>().update(
-                            addressId: addressToEdit.id,
-                            label: labelCtrl.text.trim(),
-                            governorate: govCtrl.text.trim(),
-                            city: cityCtrl.text.trim(),
-                            street: streetCtrl.text.trim(),
-                            building: buildingCtrl.text.trim(),
-                            floor: floorCtrl.text.trim(),
-                            apartment: aptCtrl.text.trim(),
-                            additionalDetails: detailsCtrl.text.trim(),
-                            isDefault: isDefault,
-                          );
+                        addressId: addressToEdit.id,
+                        label: labelCtrl.text.trim(),
+                        governorate: govCtrl.text.trim(),
+                        city: cityCtrl.text.trim(),
+                        street: streetCtrl.text.trim(),
+                        building: buildingCtrl.text.trim(),
+                        floor: floorCtrl.text.trim(),
+                        apartment: aptCtrl.text.trim(),
+                        additionalDetails: detailsCtrl.text.trim(),
+                        isDefault: isDefault,
+                      );
                     } else {
                       await this.context.read<AddressesCubit>().create(
-                            label: labelCtrl.text.trim(),
-                            governorate: govCtrl.text.trim(),
-                            city: cityCtrl.text.trim(),
-                            street: streetCtrl.text.trim(),
-                            building: buildingCtrl.text.trim(),
-                            floor: floorCtrl.text.trim(),
-                            apartment: aptCtrl.text.trim(),
-                            additionalDetails: detailsCtrl.text.trim(),
-                            isDefault: isDefault,
-                          );
+                        label: labelCtrl.text.trim(),
+                        governorate: govCtrl.text.trim(),
+                        city: cityCtrl.text.trim(),
+                        street: streetCtrl.text.trim(),
+                        building: buildingCtrl.text.trim(),
+                        floor: floorCtrl.text.trim(),
+                        apartment: aptCtrl.text.trim(),
+                        additionalDetails: detailsCtrl.text.trim(),
+                        isDefault: isDefault,
+                      );
                     }
                   },
                   style: ElevatedButton.styleFrom(
@@ -168,7 +184,11 @@ class _AddressesScreenState extends State<AddressesScreen> {
     );
   }
 
-  Widget _inputField(String label, TextEditingController ctrl, {int maxLines = 1}) {
+  Widget _inputField(
+    String label,
+    TextEditingController ctrl, {
+    int maxLines = 1,
+  }) {
     return TextField(
       controller: ctrl,
       maxLines: maxLines,
@@ -190,7 +210,10 @@ class _AddressesScreenState extends State<AddressesScreen> {
           borderRadius: BorderRadius.circular(10),
           borderSide: const BorderSide(color: AppColors.primaryContainer),
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 14,
+          vertical: 12,
+        ),
       ),
     );
   }
@@ -202,14 +225,20 @@ class _AddressesScreenState extends State<AddressesScreen> {
         if (state.errorMessage != null) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(state.errorMessage!, style: const TextStyle(fontFamily: 'Tajawal')),
+              content: Text(
+                state.errorMessage!,
+                style: const TextStyle(fontFamily: 'Tajawal'),
+              ),
               backgroundColor: Colors.red[700],
             ),
           );
         } else if (state.successMessage != null) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(state.successMessage!, style: const TextStyle(fontFamily: 'Tajawal')),
+              content: Text(
+                state.successMessage!,
+                style: const TextStyle(fontFamily: 'Tajawal'),
+              ),
               backgroundColor: Colors.green[700],
             ),
           );
@@ -236,7 +265,10 @@ class _AddressesScreenState extends State<AddressesScreen> {
             ),
             actions: [
               IconButton(
-                icon: const Icon(Icons.arrow_forward, color: AppColors.onSurface),
+                icon: const Icon(
+                  Icons.arrow_forward,
+                  color: AppColors.onSurface,
+                ),
                 onPressed: () => context.pop(),
               ),
             ],
@@ -251,7 +283,9 @@ class _AddressesScreenState extends State<AddressesScreen> {
           ),
           body: state.status == AddressesStatus.loading && addresses.isEmpty
               ? const Center(
-                  child: CircularProgressIndicator(color: AppColors.primaryContainer),
+                  child: CircularProgressIndicator(
+                    color: AppColors.primaryContainer,
+                  ),
                 )
               : RefreshIndicator(
                   onRefresh: () => context.read<AddressesCubit>().load(),
@@ -295,13 +329,17 @@ class _AddressesScreenState extends State<AddressesScreen> {
                       : ListView.separated(
                           padding: const EdgeInsets.fromLTRB(16, 20, 16, 100),
                           itemCount: addresses.length,
-                          separatorBuilder: (_, _) => const SizedBox(height: 12),
+                          separatorBuilder: (_, _) =>
+                              const SizedBox(height: 12),
                           itemBuilder: (context, index) {
                             final address = addresses[index];
                             return _AddressCard(
                               address: address,
-                              onEdit: () => _showAddressDialog(addressToEdit: address),
-                              onDelete: () => context.read<AddressesCubit>().delete(address.id),
+                              onEdit: () =>
+                                  _showAddressDialog(addressToEdit: address),
+                              onDelete: () => context
+                                  .read<AddressesCubit>()
+                                  .delete(address.id),
                             );
                           },
                         ),
@@ -313,7 +351,10 @@ class _AddressesScreenState extends State<AddressesScreen> {
             icon: const Icon(Icons.add_location_alt_outlined),
             label: const Text(
               'إضافة عنوان',
-              style: TextStyle(fontWeight: FontWeight.bold, fontFamily: 'Tajawal'),
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontFamily: 'Tajawal',
+              ),
             ),
           ),
         );
@@ -341,7 +382,9 @@ class _AddressCard extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
-          color: address.isDefault ? AppColors.primaryContainer : AppColors.surfaceVariant,
+          color: address.isDefault
+              ? AppColors.primaryContainer
+              : AppColors.surfaceVariant,
           width: address.isDefault ? 1.5 : 1,
         ),
         boxShadow: [
@@ -359,7 +402,9 @@ class _AddressCard extends StatelessWidget {
             children: [
               Icon(
                 Icons.location_on,
-                color: address.isDefault ? AppColors.primaryContainer : AppColors.primary,
+                color: address.isDefault
+                    ? AppColors.primaryContainer
+                    : AppColors.primary,
                 size: 20,
               ),
               const SizedBox(width: 8),
@@ -376,7 +421,10 @@ class _AddressCard extends StatelessWidget {
               ),
               if (address.isDefault)
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 3,
+                  ),
                   decoration: BoxDecoration(
                     color: AppColors.primaryContainer.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(6),
@@ -410,7 +458,10 @@ class _AddressCard extends StatelessWidget {
               TextButton.icon(
                 onPressed: onEdit,
                 icon: const Icon(Icons.edit_outlined, size: 16),
-                label: const Text('تعديل', style: TextStyle(fontFamily: 'Tajawal')),
+                label: const Text(
+                  'تعديل',
+                  style: TextStyle(fontFamily: 'Tajawal'),
+                ),
                 style: TextButton.styleFrom(
                   foregroundColor: AppColors.primary,
                   visualDensity: VisualDensity.compact,
@@ -420,7 +471,10 @@ class _AddressCard extends StatelessWidget {
               TextButton.icon(
                 onPressed: onDelete,
                 icon: const Icon(Icons.delete_outline, size: 16),
-                label: const Text('حذف', style: TextStyle(fontFamily: 'Tajawal')),
+                label: const Text(
+                  'حذف',
+                  style: TextStyle(fontFamily: 'Tajawal'),
+                ),
                 style: TextButton.styleFrom(
                   foregroundColor: Colors.red[700],
                   visualDensity: VisualDensity.compact,

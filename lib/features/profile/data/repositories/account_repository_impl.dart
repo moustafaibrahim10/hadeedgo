@@ -12,18 +12,14 @@ class AccountRepositoryImpl implements AccountRepository {
   const AccountRepositoryImpl(this._api);
 
   @override
-  Future<AccountSummary> getAccountSummary() async =>
-      AccountSummary.fromJson(await _dataMap(
-        _api.getAccountSummary(),
-        'تعذر تحميل ملخص الحساب',
-      ));
+  Future<AccountSummary> getAccountSummary() async => AccountSummary.fromJson(
+    await _dataMap(_api.getAccountSummary(), 'تعذر تحميل ملخص الحساب'),
+  );
 
   @override
-  Future<UserProfile> getProfile() async =>
-      UserProfile.fromJson(await _dataMap(
-        _api.getProfile(),
-        'تعذر تحميل الملف الشخصي',
-      ));
+  Future<UserProfile> getProfile() async => UserProfile.fromJson(
+    await _dataMap(_api.getProfile(), 'تعذر تحميل الملف الشخصي'),
+  );
 
   @override
   Future<UserProfile> updateProfile({
@@ -38,18 +34,14 @@ class AccountRepositoryImpl implements AccountRepository {
       'companyName': companyName,
       'avatarUrl': avatarUrl,
     };
-    return UserProfile.fromJson(await _dataMap(
-      _api.updateProfile(payload),
-      'تعذر تحديث الملف الشخصي',
-    ));
+    return UserProfile.fromJson(
+      await _dataMap(_api.updateProfile(payload), 'تعذر تحديث الملف الشخصي'),
+    );
   }
 
   @override
   Future<List<SavedAddress>> getAddresses() async {
-    final data = await _dataList(
-      _api.getAddresses(),
-      'تعذر تحميل العناوين',
-    );
+    final data = await _dataList(_api.getAddresses(), 'تعذر تحميل العناوين');
     return data
         .whereType<Map<String, dynamic>>()
         .map(SavedAddress.fromJson)
@@ -79,10 +71,9 @@ class AccountRepositoryImpl implements AccountRepository {
       'additionalDetails': additionalDetails,
       'isDefault': isDefault,
     };
-    return SavedAddress.fromJson(await _dataMap(
-      _api.createAddress(payload),
-      'تعذر إضافة العنوان',
-    ));
+    return SavedAddress.fromJson(
+      await _dataMap(_api.createAddress(payload), 'تعذر إضافة العنوان'),
+    );
   }
 
   @override
@@ -109,10 +100,12 @@ class AccountRepositoryImpl implements AccountRepository {
       'additionalDetails': additionalDetails,
       'isDefault': isDefault,
     };
-    return SavedAddress.fromJson(await _dataMap(
-      _api.updateAddress(addressId, payload),
-      'تعذر تعديل العنوان',
-    ));
+    return SavedAddress.fromJson(
+      await _dataMap(
+        _api.updateAddress(addressId, payload),
+        'تعذر تعديل العنوان',
+      ),
+    );
   }
 
   @override
@@ -120,25 +113,29 @@ class AccountRepositoryImpl implements AccountRepository {
       _dataMap(_api.deleteAddress(addressId), 'تعذر حذف العنوان');
 
   @override
-  Future<TaxInvoicesPage> getInvoices({int page = 1, int pageSize = 10}) async =>
-      TaxInvoicesPage.fromJson(await _dataMap(
-        _api.getInvoices(page: page, pageSize: pageSize),
-        'تعذر تحميل الفواتير الضريبية',
-      ));
+  Future<TaxInvoicesPage> getInvoices({
+    int page = 1,
+    int pageSize = 10,
+  }) async => TaxInvoicesPage.fromJson(
+    await _dataMap(
+      _api.getInvoices(page: page, pageSize: pageSize),
+      'تعذر تحميل الفواتير الضريبية',
+    ),
+  );
 
   @override
   Future<TaxInvoiceDetails> getInvoiceDetails(String orderId) async =>
-      TaxInvoiceDetails.fromJson(await _dataMap(
-        _api.getInvoiceDetails(orderId),
-        'تعذر تحميل تفاصيل الفاتورة',
-      ));
+      TaxInvoiceDetails.fromJson(
+        await _dataMap(
+          _api.getInvoiceDetails(orderId),
+          'تعذر تحميل تفاصيل الفاتورة',
+        ),
+      );
 
   @override
-  Future<SupportInfo> getSupport() async =>
-      SupportInfo.fromJson(await _dataMap(
-        _api.getSupport(),
-        'تعذر تحميل بيانات الدعم الفني',
-      ));
+  Future<SupportInfo> getSupport() async => SupportInfo.fromJson(
+    await _dataMap(_api.getSupport(), 'تعذر تحميل بيانات الدعم الفني'),
+  );
 
   // ─── Private Helpers ─────────────────────────────────────────────────────────
 
@@ -149,13 +146,19 @@ class AccountRepositoryImpl implements AccountRepository {
     try {
       final response = await request;
       final raw = response.data;
-      if (raw is! Map<String, dynamic>) throw FailureException(ServerFailure(fallback));
+      if (raw is! Map<String, dynamic>)
+        throw FailureException(ServerFailure(fallback));
       final parsed = ApiResponse<dynamic>.fromJson(raw, null);
       if (!parsed.success) {
         final errorMsg = parsed.errors.isNotEmpty
-            ? parsed.errors.map((e) => e.message).where((m) => m.isNotEmpty).join(', ')
+            ? parsed.errors
+                  .map((e) => e.message)
+                  .where((m) => m.isNotEmpty)
+                  .join(', ')
             : parsed.message ?? fallback;
-        throw FailureException(ServerFailure(errorMsg.isNotEmpty ? errorMsg : fallback));
+        throw FailureException(
+          ServerFailure(errorMsg.isNotEmpty ? errorMsg : fallback),
+        );
       }
       final data = raw['data'];
       return data is Map<String, dynamic> ? data : const {};
@@ -173,13 +176,19 @@ class AccountRepositoryImpl implements AccountRepository {
     try {
       final response = await request;
       final raw = response.data;
-      if (raw is! Map<String, dynamic>) throw FailureException(ServerFailure(fallback));
+      if (raw is! Map<String, dynamic>)
+        throw FailureException(ServerFailure(fallback));
       final parsed = ApiResponse<dynamic>.fromJson(raw, null);
       if (!parsed.success) {
         final errorMsg = parsed.errors.isNotEmpty
-            ? parsed.errors.map((e) => e.message).where((m) => m.isNotEmpty).join(', ')
+            ? parsed.errors
+                  .map((e) => e.message)
+                  .where((m) => m.isNotEmpty)
+                  .join(', ')
             : parsed.message ?? fallback;
-        throw FailureException(ServerFailure(errorMsg.isNotEmpty ? errorMsg : fallback));
+        throw FailureException(
+          ServerFailure(errorMsg.isNotEmpty ? errorMsg : fallback),
+        );
       }
       final data = raw['data'];
       return data is List ? data : const [];
@@ -202,9 +211,11 @@ class AccountRepositoryImpl implements AccountRepository {
     final body = error.response?.data;
     String? message;
     if (body is Map<String, dynamic>) {
-      if (body['message'] != null && body['message'].toString().trim().isNotEmpty) {
+      if (body['message'] != null &&
+          body['message'].toString().trim().isNotEmpty) {
         message = body['message'].toString();
-      } else if (body['errors'] is List && (body['errors'] as List).isNotEmpty) {
+      } else if (body['errors'] is List &&
+          (body['errors'] as List).isNotEmpty) {
         final errs = (body['errors'] as List)
             .whereType<Map<String, dynamic>>()
             .map((e) => e['message']?.toString())
@@ -212,8 +223,7 @@ class AccountRepositoryImpl implements AccountRepository {
             .join(', ');
         if (errs.isNotEmpty) message = errs;
       } else if (body['errors'] is Map) {
-        final errs = (body['errors'] as Map)
-            .values
+        final errs = (body['errors'] as Map).values
             .expand((v) => v is List ? v : [v])
             .map((e) => e.toString())
             .where((m) => m.isNotEmpty)
@@ -223,6 +233,8 @@ class AccountRepositoryImpl implements AccountRepository {
         message = body['title'].toString();
       }
     }
-    return FailureException(ServerFailure(message ?? error.response?.statusMessage ?? fallback));
+    return FailureException(
+      ServerFailure(message ?? error.response?.statusMessage ?? fallback),
+    );
   }
 }

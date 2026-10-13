@@ -52,10 +52,12 @@ class ExploreCubit extends Cubit<ExploreState> {
       final data = await _getExplore();
       emit(state.copyWith(status: ExploreStatus.success, data: data));
     } catch (error) {
-      emit(state.copyWith(
-        status: ExploreStatus.failure,
-        errorMessage: _msg(error),
-      ));
+      emit(
+        state.copyWith(
+          status: ExploreStatus.failure,
+          errorMessage: _msg(error),
+        ),
+      );
     }
   }
 }
@@ -112,12 +114,14 @@ class SearchCubit extends Cubit<SearchState> {
     String? supplierId,
     int pageSize = 20,
   }) async {
-    emit(SearchState(
-      status: SearchStatus.loading,
-      activeQuery: q,
-      activeCategoryId: categoryId,
-      activeSupplierId: supplierId,
-    ));
+    emit(
+      SearchState(
+        status: SearchStatus.loading,
+        activeQuery: q,
+        activeCategoryId: categoryId,
+        activeSupplierId: supplierId,
+      ),
+    );
     try {
       final results = await _search(
         q: q,
@@ -128,10 +132,9 @@ class SearchCubit extends Cubit<SearchState> {
       );
       emit(state.copyWith(status: SearchStatus.success, results: results));
     } catch (error) {
-      emit(state.copyWith(
-        status: SearchStatus.failure,
-        errorMessage: _msg(error),
-      ));
+      emit(
+        state.copyWith(status: SearchStatus.failure, errorMessage: _msg(error)),
+      );
     }
   }
 
@@ -161,10 +164,9 @@ class SearchCubit extends Cubit<SearchState> {
       emit(state.copyWith(status: SearchStatus.success, results: merged));
     } catch (error) {
       // Keep existing results visible on pagination failure.
-      emit(state.copyWith(
-        status: SearchStatus.success,
-        errorMessage: _msg(error),
-      ));
+      emit(
+        state.copyWith(status: SearchStatus.success, errorMessage: _msg(error)),
+      );
     }
   }
 
@@ -203,31 +205,31 @@ class RecentSearchesCubit extends Cubit<RecentSearchesState> {
   final ClearRecentSearches _clearRecent;
 
   RecentSearchesCubit(this._getRecent, this._clearRecent)
-      : super(const RecentSearchesState());
+    : super(const RecentSearchesState());
 
   Future<void> load() async {
-    emit(state.copyWith(
-      status: RecentSearchesStatus.loading,
-      errorMessage: null,
-    ));
+    emit(
+      state.copyWith(status: RecentSearchesStatus.loading, errorMessage: null),
+    );
     try {
       final items = await _getRecent();
       emit(state.copyWith(status: RecentSearchesStatus.success, items: items));
     } catch (error) {
-      emit(state.copyWith(
-        status: RecentSearchesStatus.failure,
-        errorMessage: _msg(error),
-      ));
+      emit(
+        state.copyWith(
+          status: RecentSearchesStatus.failure,
+          errorMessage: _msg(error),
+        ),
+      );
     }
   }
 
   Future<void> clearAll() async {
     try {
       await _clearRecent();
-      emit(state.copyWith(
-        status: RecentSearchesStatus.success,
-        items: const [],
-      ));
+      emit(
+        state.copyWith(status: RecentSearchesStatus.success, items: const []),
+      );
     } catch (_) {
       // Silently ignore clear errors — not critical.
     }

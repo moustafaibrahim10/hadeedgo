@@ -190,9 +190,9 @@ class TaxInvoicesPage {
       pageSize: _int(json['pageSize']) ?? 10,
       items: rawItems is List
           ? rawItems
-              .whereType<Map<String, dynamic>>()
-              .map(TaxInvoiceItem.fromJson)
-              .toList()
+                .whereType<Map<String, dynamic>>()
+                .map(TaxInvoiceItem.fromJson)
+                .toList()
           : const [],
     );
   }
@@ -268,14 +268,18 @@ class TaxInvoiceDetails {
       buyerCompanyName: json['buyerCompanyName']?.toString(),
       buyerTaxId: json['buyerTaxId']?.toString(),
       subTotal: json['subTotal'] is num ? json['subTotal'] as num : null,
-      deliveryFee: json['deliveryFee'] is num ? json['deliveryFee'] as num : null,
+      deliveryFee: json['deliveryFee'] is num
+          ? json['deliveryFee'] as num
+          : null,
       taxAmount: json['taxAmount'] is num ? json['taxAmount'] as num : null,
-      totalAmount: json['totalAmount'] is num ? json['totalAmount'] as num : null,
+      totalAmount: json['totalAmount'] is num
+          ? json['totalAmount'] as num
+          : null,
       lines: rawLines is List
           ? rawLines
-              .whereType<Map<String, dynamic>>()
-              .map(InvoiceLine.fromJson)
-              .toList()
+                .whereType<Map<String, dynamic>>()
+                .map(InvoiceLine.fromJson)
+                .toList()
           : const [],
     );
   }

@@ -81,15 +81,13 @@ class _SplashScreenState extends State<SplashScreen>
       parent: _introController,
       curve: const Interval(0.65, 1.0, curve: Curves.easeOut),
     );
-    _taglineSlide = Tween<Offset>(
-      begin: const Offset(0, 0.6),
-      end: Offset.zero,
-    ).animate(
-      CurvedAnimation(
-        parent: _introController,
-        curve: const Interval(0.65, 1.0, curve: Curves.easeOutCubic),
-      ),
-    );
+    _taglineSlide = Tween<Offset>(begin: const Offset(0, 0.6), end: Offset.zero)
+        .animate(
+          CurvedAnimation(
+            parent: _introController,
+            curve: const Interval(0.65, 1.0, curve: Curves.easeOutCubic),
+          ),
+        );
 
     // نبض خفيف مستمر
     _pulse = Tween<double>(begin: 0.98, end: 1.03).animate(
@@ -97,12 +95,14 @@ class _SplashScreenState extends State<SplashScreen>
     );
 
     // الخروج
-    _exitFade = Tween<double>(begin: 1.0, end: 0.0).animate(
-      CurvedAnimation(parent: _exitController, curve: Curves.easeIn),
-    );
-    _exitScale = Tween<double>(begin: 1.0, end: 1.08).animate(
-      CurvedAnimation(parent: _exitController, curve: Curves.easeIn),
-    );
+    _exitFade = Tween<double>(
+      begin: 1.0,
+      end: 0.0,
+    ).animate(CurvedAnimation(parent: _exitController, curve: Curves.easeIn));
+    _exitScale = Tween<double>(
+      begin: 1.0,
+      end: 1.08,
+    ).animate(CurvedAnimation(parent: _exitController, curve: Curves.easeIn));
 
     _introController.forward();
     _finishSplash();

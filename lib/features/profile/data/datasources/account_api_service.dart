@@ -17,7 +17,9 @@ abstract class AccountApiService {
 
   /// تعديل الملف الشخصي
   @PUT('/api/v1/account/profile')
-  Future<HttpResponse<dynamic>> updateProfile(@Body() Map<String, dynamic> body);
+  Future<HttpResponse<dynamic>> updateProfile(
+    @Body() Map<String, dynamic> body,
+  );
 
   /// العناوين المحفوظة
   @GET('/api/v1/account/addresses')
@@ -25,7 +27,9 @@ abstract class AccountApiService {
 
   /// إضافة عنوان
   @POST('/api/v1/account/addresses')
-  Future<HttpResponse<dynamic>> createAddress(@Body() Map<String, dynamic> body);
+  Future<HttpResponse<dynamic>> createAddress(
+    @Body() Map<String, dynamic> body,
+  );
 
   /// تعديل عنوان
   @PUT('/api/v1/account/addresses/{addressId}')
@@ -36,7 +40,9 @@ abstract class AccountApiService {
 
   /// حذف عنوان
   @DELETE('/api/v1/account/addresses/{addressId}')
-  Future<HttpResponse<dynamic>> deleteAddress(@Path('addressId') String addressId);
+  Future<HttpResponse<dynamic>> deleteAddress(
+    @Path('addressId') String addressId,
+  );
 
   /// الفواتير الضريبية
   @GET('/api/v1/account/invoices')
@@ -47,7 +53,9 @@ abstract class AccountApiService {
 
   /// تفاصيل فاتورة ضريبية
   @GET('/api/v1/account/invoices/{orderId}')
-  Future<HttpResponse<dynamic>> getInvoiceDetails(@Path('orderId') String orderId);
+  Future<HttpResponse<dynamic>> getInvoiceDetails(
+    @Path('orderId') String orderId,
+  );
 
   /// الدعم الفني
   @GET('/api/v1/account/support')

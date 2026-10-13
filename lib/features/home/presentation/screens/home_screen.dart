@@ -43,25 +43,25 @@ class HomeScreen extends StatelessWidget {
           }
         },
         builder: (context, state) {
-        return AnnotatedRegion<SystemUiOverlayStyle>(
-          value: const SystemUiOverlayStyle(
-            statusBarColor: AppColors.surface,
-            statusBarIconBrightness: Brightness.dark,
-            statusBarBrightness: Brightness.light,
-            systemNavigationBarColor: AppColors.background,
-            systemNavigationBarIconBrightness: Brightness.dark,
-          ),
-          child: Scaffold(
-            backgroundColor: AppColors.background,
-            appBar: PreferredSize(
-              preferredSize: Size.fromHeight(
-                64.h + MediaQuery.paddingOf(context).top,
-              ),
-              child: const HomeAppBar(),
+          return AnnotatedRegion<SystemUiOverlayStyle>(
+            value: const SystemUiOverlayStyle(
+              statusBarColor: AppColors.surface,
+              statusBarIconBrightness: Brightness.dark,
+              statusBarBrightness: Brightness.light,
+              systemNavigationBarColor: AppColors.background,
+              systemNavigationBarIconBrightness: Brightness.dark,
             ),
-            body: _buildBody(context, state),
-          ),
-        );
+            child: Scaffold(
+              backgroundColor: AppColors.background,
+              appBar: PreferredSize(
+                preferredSize: Size.fromHeight(
+                  64.h + MediaQuery.paddingOf(context).top,
+                ),
+                child: const HomeAppBar(),
+              ),
+              body: _buildBody(context, state),
+            ),
+          );
         },
       ),
     );
@@ -112,9 +112,8 @@ class HomeScreen extends StatelessWidget {
                         onOfferTap: (offer) => _openOffer(context, offer),
                         onAddToCart: isCartMutating
                             ? null
-                            : (offer, quantity) => context
-                                  .read<CartCubit>()
-                                  .addItem(
+                            : (offer, quantity) =>
+                                  context.read<CartCubit>().addItem(
                                     offerId: offer.offerId,
                                     quantity: quantity,
                                   ),
@@ -169,8 +168,7 @@ class HomeScreen extends StatelessWidget {
 class _FeaturedOffersCarousel extends StatefulWidget {
   final List<FeaturedOffer> offers;
   final ValueChanged<FeaturedOffer> onOfferTap;
-  final Future<void> Function(FeaturedOffer offer, int quantity)?
-  onAddToCart;
+  final Future<void> Function(FeaturedOffer offer, int quantity)? onAddToCart;
 
   const _FeaturedOffersCarousel({
     required this.offers,
@@ -227,9 +225,9 @@ class _FeaturedOffersCarouselState extends State<_FeaturedOffersCarousel> {
                       onAddToCart: widget.onAddToCart == null
                           ? null
                           : (quantity) => widget.onAddToCart!(
-                                widget.offers[index],
-                                quantity,
-                              ),
+                              widget.offers[index],
+                              quantity,
+                            ),
                     ),
                   ),
                 ),

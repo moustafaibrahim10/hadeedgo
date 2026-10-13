@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/localization/app_localizations.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../domain/entities/catalog_entities.dart';
+
 /// Premium product card for the catalog product list. Mirrors the visual
 /// language of the search / featured cards (white card, soft shadow, rounded
 /// corners, accent stripe) with a bolder price treatment and a gradient
@@ -148,16 +149,15 @@ class ProductCard extends StatelessWidget {
 
   String _formatMoney(num? value, String? currency) {
     if (value == null) return '';
-    final amount =
-        value % 1 == 0 ? value.toStringAsFixed(0) : value.toStringAsFixed(2);
+    final amount = value % 1 == 0
+        ? value.toStringAsFixed(0)
+        : value.toStringAsFixed(2);
     final parts = <String>[amount];
     if (currency?.isNotEmpty == true) parts.add(currency!);
     if (product.unit?.isNotEmpty == true) parts.add('/ ${product.unit}');
     return parts.join(' ');
   }
 }
-
-
 
 class _ProductTitle extends StatelessWidget {
   final String title;
@@ -252,8 +252,11 @@ class _PremiumActionButton extends StatelessWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.arrow_forward_rounded,
-                    size: 18.sp, color: Colors.white),
+                Icon(
+                  Icons.arrow_forward_rounded,
+                  size: 18.sp,
+                  color: Colors.white,
+                ),
                 SizedBox(width: 6.w),
                 Text(
                   l10n.viewDetails,
